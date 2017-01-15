@@ -50,31 +50,28 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
     }
   })
 
-  .state('tab.chats', {
-      url: '/chats',
-      views: {
-        'tab-chats': {
-          templateUrl: 'templates/tab-chats.html',
-          controller: 'ChatsCtrl'
-        }
-      }
-    })
-    .state('tab.chat-detail', {
-      url: '/chats/:chatId',
-      views: {
-        'tab-chats': {
-          templateUrl: 'templates/chat-detail.html',
-          controller: 'ChatDetailCtrl'
-        }
-      }
-    })
+.state('desafios', {
+    url: '/desafios',
+    abstract: true,
+    templateUrl: 'templates/desafios/desafios.html'
+  })
 
-  .state('tab.account', {
-    url: '/account',
+  .state('desafios.todos', {
+    url: '/desafios/desafios',
     views: {
-      'tab-account': {
-        templateUrl: 'templates/tab-account.html',
-        controller: 'AccountCtrl'
+      'desafios-todos': {
+        templateUrl: 'templates/desafios/todos.html',
+        controller: 'DesafiosCtrl'
+      }
+    }
+  })
+
+  .state('desafios.nuevo', {
+    url: '/desafios/nuevo',
+    views: {
+      'desafios-nuevo': {
+        templateUrl: 'templates/desafios/nuevo.html',
+        controller: 'DesafioNuevoCtrl'
       }
     }
   });

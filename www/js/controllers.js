@@ -1,28 +1,51 @@
 angular.module('starter.controllers', [])
 
-.controller('DashCtrl', function($scope) {})
+.controller('DashCtrl', function($scope, $state) {
+  $scope.VerDesafios = function(){
+    $state.go('desafios.todos');
+  }
 
-.controller('ChatsCtrl', function($scope, Chats) {
-  // With the new view caching in Ionic, Controllers are only called
-  // when they are recreated or on app start, instead of every page change.
-  // To listen for when this page is active (for example, to refresh data),
-  // listen for the $ionicView.enter event:
-  //
-  //$scope.$on('$ionicView.enter', function(e) {
-  //});
+  $scope.CrearDesafio = function(){
+    $state.go('desafios.nuevo');
+  }
 
-  $scope.chats = Chats.all();
-  $scope.remove = function(chat) {
-    Chats.remove(chat);
-  };
+  $scope.IrATienda = function(){
+    $state.go('store');
+  }
+
+  $scope.VerRanking = function(){
+    $state.go('ranking');
+  }
+
+  $scope.About = function(){
+    $state.go('about');
+  }
+
+
 })
 
-.controller('ChatDetailCtrl', function($scope, $stateParams, Chats) {
-  $scope.chat = Chats.get($stateParams.chatId);
+.controller('DesafiosCtrl', function($scope) {
+  $scope.listaDeDesafios = [];
+
+  $scope.listaDeDesafios = [{
+    id: 00001,
+    nombre: 'desafio1',
+    autor: 'pepito',
+    estado: 'activo'
+  },{
+    id: 00002,
+    nombre: 'desafio1',
+    autor: 'pepito',
+    estado: 'cerrado'
+  },{
+    id: 00003,
+    nombre: 'Desafienme',
+    autor: 'cielito',
+    estado: 'abierto'
+  }]
 })
 
-.controller('AccountCtrl', function($scope) {
-  $scope.settings = {
-    enableFriends: true
-  };
+.controller('DesafioNuevoCtrl', function($scope) {
+  $scope.nuevoDesafio = {};
+
 });
