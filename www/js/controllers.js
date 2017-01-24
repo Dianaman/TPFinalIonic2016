@@ -47,5 +47,6 @@ angular.module('starter.controllers', [])
 
 .controller('DesafioNuevoCtrl', function($scope) {
   $scope.nuevoDesafio = {};
+  
 
 });
