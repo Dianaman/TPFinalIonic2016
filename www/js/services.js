@@ -1,50 +1,75 @@
 angular.module('starter.services', [])
 
-.factory('Chats', function() {
-  // Might use a resource here that returns a JSON array
-
-  // Some fake testing data
-  var chats = [{
-    id: 0,
-    name: 'Ben Sparrow',
-    lastText: 'You on your way?',
-    face: 'img/ben.png'
-  }, {
-    id: 1,
-    name: 'Max Lynx',
-    lastText: 'Hey, it\'s me',
-    face: 'img/max.png'
-  }, {
-    id: 2,
-    name: 'Adam Bradleyson',
-    lastText: 'I should buy a boat',
-    face: 'img/adam.jpg'
-  }, {
-    id: 3,
-    name: 'Perry Governor',
-    lastText: 'Look at my mukluks!',
-    face: 'img/perry.png'
-  }, {
-    id: 4,
-    name: 'Mike Harrington',
-    lastText: 'This is wicked good ice cream.',
-    face: 'img/mike.png'
-  }];
+.factory('UsuarioDelorean',[function(){
+  var nombre = "";
+  var email = "";
+  var soyAdmin = false;
 
   return {
-    all: function() {
-      return chats;
-    },
-    remove: function(chat) {
-      chats.splice(chats.indexOf(chat), 1);
-    },
-    get: function(chatId) {
-      for (var i = 0; i < chats.length; i++) {
-        if (chats[i].id === parseInt(chatId)) {
-          return chats[i];
-        }
-      }
-      return null;
+    login:function(name,mail,admin){
+      nombre = name;
+      email = mail;
+      soyAdmin = admin;
+    },getName:function(){
+      return nombre;
+    },getEmail:function(){
+      return email;
+    },isAdmin:function(){
+      return soyAdmin;
+    },getFullData:function(){
+      var jsonUsuario = {};
+      jsonUsuario.nombre = nombre;
+      jsonUsuario.email = email;
+      jsonUsuario.soyAdmin = soyAdmin;
+      return JSON.stringify(jsonUsuario);
     }
   };
-});
+}])
+
+.service('SrvFirebase', ['$http',function($http){
+
+  this.RefUsuarios = RefUsuarios;
+  this.RefDesafios = RefDesafios;
+  this.EnviarNotificacion = EnviarNotificacion;
+
+  function ObtenerRef(coleccion){
+    return firebase.database().ref(coleccion);
+
+  }
+
+  function RefUsuarios(){
+    return ObtenerRef('usuarios/');
+  }
+
+  function RefDesafios(){
+    return ObtenerRef('desafios/');
+  }
+
+  function EnviarNotificacion(){
+    var http = new XMLHttpRequest();
+    /*var url =  'https://fcm.googleapis.com/fcm/send';
+    
+    var params = JSON.stringify({
+            "to":"/topics/all", //Topic or single device
+        "notification":{
+            "title":"Autopistas Delorean",  //Any value
+            "body":"Una nueva Denuncia fue ingresada.",  //Any value
+            "sound":"default", //If you want notification sound
+            "click_action":"FCM_PLUGIN_ACTIVITY",  //Must be present for Android
+            "icon":"fcm_push_icon"  //White icon Android resource
+          },
+            "priority":"high" //If not set, notification won't be delivered on completely closed iOS app
+      });
+
+    http.open("POST", url, true);
+      http.setRequestHeader("Content-type", "application/json");
+      http.setRequestHeader('Authorization', 'key=AIzaSyDrcIOmidimEhCPJIGqlSJJQQ-9i0_yLKc');
+
+      http.onreadystatechange = function() {
+          if(http.readyState == 4 && http.status == 200) {
+              console.log(http.responseText);
+          }
+      }
+      http.send(params);*/
+    }
+}]);

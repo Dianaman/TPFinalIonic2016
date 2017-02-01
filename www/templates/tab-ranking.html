@@ -1,0 +1,25 @@
+<ion-view view-title="Ranking">
+
+  <ion-content >
+  
+    <h3>Guardado en archivo</h3>
+  	<div class="archivo-container">
+    	{{archivo.puntaje}}
+    	{{archivo.error}}
+    </div>
+
+    <h3>Guardado en Firebase</h3>
+    <p ng-repeat="item in puntuaciones">
+      Usuario: {{item.usuario}}
+      <span ng-repeat="preg in item">
+      Pregunta: {{preg.pregunta}}
+      Respuesta seleccionada: {{preg.seleccionado}}
+      Respuesta correcta: {{preg.correcta}}
+      </span>
+      Puntuacion: {{item.puntaje}}
+      <br><br>
+    </p>
+
+
+  </ion-content>
+</ion-view>

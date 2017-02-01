@@ -45,8 +45,38 @@ angular.module('starter.controllers', [])
   }]
 })
 
-.controller('DesafioNuevoCtrl', function($scope) {
+.controller('DesafioNuevoCtrl', function($scope, $state, $timeout, SrvFirebase) {
   $scope.nuevoDesafio = {};
   
+  $scope.crearDesafio = function(){
+    var referencia = SrvFirebase.RefDesafios();
+    var referenciaFirebase = referencia.push();
+
+    referenciaFirebase.set($scope.nuevoDesafio, function(error){
+      var mensaje = '';
+
+      if(error){
+        mensaje = 'Ocurrió un problema al crear el desafío. Intentelo más tarde.';
+        console.error('Error desafío: ', error);
+      }
+      else{
+        mensaje = '¡¡Desafío creado exitosamente!!';
+        console.info('Desafío: ', $scope.nuevoDesafio);
+        try{
+          SrvFirebase.EnviarNotificacion();
+        }catch(error){
+          alert(error);
+        }
+      }
+
+
+      $timeout(function(){
+        $scope.cargando = false;
+        alert(mensaje);
+
+        $state.go('desafios.todos');
+      }, 1000);
+    });
+  }
 
 });

@@ -2,30 +2,30 @@
   <ion-content class="padding">
   	<div class="list">
 	  	<label class="item item-input">
-	  		<input type="text" name="nuevodesafio.nombre" placeholder="Nombre del desafío">
+	  		<input type="text" ng-model="nuevoDesafio.nombre" placeholder="Nombre del desafío">
 	  	</label>
 	  	<div class="item">
 	  		<span class="input-label" style="display:inline-block">Tipo de juego</span>
-	  		<div style="width:25%;display:inline-block;">Batalla <input type="radio" ng-model="nuevodesafio.tipo" ng-value="'batalla'"></div>
-	  		<div style="width:25%;display:inline-block;">Apuesta <input type="radio" ng-model="nuevodesafio.tipo" ng-value="'apuesta'"></div>
+	  		<div style="width:25%;display:inline-block;">Batalla <input type="radio" ng-model="nuevoDesafio.tipo" ng-value="'batalla'"></div>
+	  		<div style="width:25%;display:inline-block;">Apuesta <input type="radio" ng-model="nuevoDesafio.tipo" ng-value="'apuesta'"></div>
 	  	</div>
 
 	  	<!--Creación de juego tipo apuesta -->
-	  	<div ng-show="nuevodesafio.tipo=='apuesta'">
+	  	<div ng-show="nuevoDesafio.tipo=='apuesta'">
 	  		<label class="item item-input">
-	  			<input type="text" placeholder="Descripción de la apuesta" name="nuevodesafio.descripcion">
+	  			<input type="text" placeholder="Descripción de la apuesta" name="nuevoDesafio.descripcion">
 	  		</label>
 	  		<label class="item item-input">
-		  		<div class="item" ion-datetime-picker ng-model="nuevodesafio.fechadecierre" only-valid="{'after': auxiliar.fechaactual, 'inclusive': false}">
-			        {{nuevodesafio.fechadecierre| date: "yyyy-MM-dd H:mm"}}
+		  		<div class="item" ion-datetime-picker ng-model="nuevoDesafio.fechadecierre" only-valid="{'after': auxiliar.fechaactual, 'inclusive': false}">
+			        {{nuevoDesafio.fechadecierre| date: "yyyy-MM-dd H:mm"}}
 			    </div>
 		    </label>
 	  	</div>
 
 	  	<!-- Creación de juego tipo batalla naval -->
-	  	<div ng-show="nuevodesafio.tipo=='batalla'">
+	  	<div ng-show="nuevoDesafio.tipo=='batalla'">
 	  		<label class="item item-input">
-			  	<select name="nuevodesafio.dificultad">
+			  	<select name="nuevoDesafio.dificultad" ng-model="nuevoDesafio.dificultad">
 			  		<option selected disabled hidden>Nivel de dificultad</option>
 			  		<option value="facil">Fácil (6x6)</option>
 			  		<option value="medio">Medio (12x12)</option>
@@ -38,8 +38,10 @@
 	  	<!-- Creación de juego genérico -->
 	  	<label class="item item-input">
 		  	<span class="input-label">Cantidad a apostar</span>
-		  	<input type="number" name="nuevodesafio.cantidad" min="10" max="1000" step="10" required>
+		  	<input type="number" ng-model="nuevoDesafio.cantidad" min="10" max="1000" step="10" required>
 	  	</label>
+
+	  	<button class="button button-block button-balanced" ng-click="crearDesafio()">Crear desafío</button>
   	</div>
   </ion-content>
 </ion-view>
