@@ -76,8 +76,12 @@ button.rta{
 }
 
 .table-center{
-	margin: 10% 30%;
+	margin: 5% 30%;
+	background-color: white;
+	opacity: 0.8;
+	color: black;
 }
 .table-center td{
 	width:20%;
+	padding: 15px;
 }

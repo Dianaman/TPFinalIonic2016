@@ -30,6 +30,7 @@ angular.module('starter.services', [])
 
   this.RefUsuarios = RefUsuarios;
   this.RefDesafios = RefDesafios;
+  this.RefPuntuaciones = RefPuntuaciones;
   this.EnviarNotificacion = EnviarNotificacion;
 
   function ObtenerRef(coleccion){
@@ -43,6 +44,10 @@ angular.module('starter.services', [])
 
   function RefDesafios(){
     return ObtenerRef('desafios/');
+  }
+
+  function RefPuntuaciones(){
+    return ObtenerRef('puntuaciones/');
   }
 
   function EnviarNotificacion(){

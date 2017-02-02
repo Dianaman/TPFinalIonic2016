@@ -55,11 +55,11 @@ angular.module('starter.controllers', [])
 .controller('RankingCtrl', function($scope, $ionicPlatform, $timeout, SrvFirebase){
   $scope.puntuaciones = [];
 
-  var puntuacionesFirebase = SrvFirebase.RefDesafios();
-  puntuacionesFirebase.on('child_added', function(snapshot) {
+  var puntuacionesFirebase = SrvFirebase.RefPuntuaciones();
+  puntuacionesFirebase.orderByChild("puntuacion").limitToLast(10).on('child_added', function(snapshot) {
     $timeout(function(){
       var puntuacion = snapshot.val();
-      $scope.puntuaciones.push(puntuacion);
+      $scope.puntuaciones.unshift(puntuacion);
     })
   })
 })
