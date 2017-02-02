@@ -50,7 +50,27 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
     }
   })
 
-.state('desafios', {
+  .state('tab.about', {
+    url: '/about',
+    views: {
+      'tab-about': {
+        templateUrl: 'templates/tab-autor.html',
+        controller: 'AboutCtrl'
+      }
+    }
+  })
+
+  .state('tab.ranking', {
+    url: '/ranking',
+    views: {
+      'tab-ranking': {
+        templateUrl: 'templates/tab-ranking.html',
+        controller: 'RankingCtrl'
+      }
+    }
+  })
+
+  .state('desafios', {
     url: '/desafios',
     abstract: true,
     templateUrl: 'templates/desafios/desafios.html'

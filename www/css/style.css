@@ -74,4 +74,10 @@ button.rta{
 		font-size:1.5rem;		
 	}
 }
-/* Empty. Add your own CSS if you like */
+
+.table-center{
+	margin: 10% 30%;
+}
+.table-center td{
+	width:20%;
+}

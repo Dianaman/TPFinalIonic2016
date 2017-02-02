@@ -14,14 +14,20 @@ angular.module('starter.controllers', [])
   }
 
   $scope.VerRanking = function(){
-    $state.go('ranking');
+    $state.go('tab.ranking');
   }
 
   $scope.About = function(){
-    $state.go('about');
+    $state.go('tab.about');
   }
 
 
+})
+
+.controller('AboutCtrl', function($scope, $window) {
+  $scope.sendMail = function(emailId, subject, message){
+    $window.open("mailto:" + emailId + "?subject=" + subject+"&body="+message,"_self");
+  }
 })
 
 .controller('DesafiosCtrl', function($scope) {
@@ -43,6 +49,19 @@ angular.module('starter.controllers', [])
     autor: 'cielito',
     estado: 'abierto'
   }]
+})
+
+
+.controller('RankingCtrl', function($scope, $ionicPlatform, $timeout, SrvFirebase){
+  $scope.puntuaciones = [];
+
+  var puntuacionesFirebase = SrvFirebase.RefDesafios();
+  puntuacionesFirebase.on('child_added', function(snapshot) {
+    $timeout(function(){
+      var puntuacion = snapshot.val();
+      $scope.puntuaciones.push(puntuacion);
+    })
+  })
 })
 
 .controller('DesafioNuevoCtrl', function($scope, $state, $timeout, SrvFirebase) {
