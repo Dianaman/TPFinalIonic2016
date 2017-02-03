@@ -94,6 +94,16 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
         controller: 'DesafioNuevoCtrl'
       }
     }
+  })
+
+  .state('desafios.batallanaval', {
+    url: '/desafios/batalla',
+    views: {
+      'desafios-batalla': {
+        templateUrl: 'templates/desafios/batalla-naval.html',
+        controller: 'DesafioBatallaCtrl'
+      }
+    }
   });
 
   // if none of the above states are matched, use this as the fallback
