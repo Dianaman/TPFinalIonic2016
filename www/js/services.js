@@ -1,6 +1,6 @@
 angular.module('starter.services', [])
 
-.factory('UsuarioDelorean',[function(){
+.factory('UsuarioDesafio',[function(){
   var nombre = "";
   var email = "";
   var soyAdmin = false;
@@ -30,6 +30,7 @@ angular.module('starter.services', [])
 
   this.RefUsuarios = RefUsuarios;
   this.RefDesafios = RefDesafios;
+  this.RefDesafioPorId = RefDesafioPorId;
   this.RefPuntuaciones = RefPuntuaciones;
   this.EnviarNotificacion = EnviarNotificacion;
 
@@ -44,6 +45,10 @@ angular.module('starter.services', [])
 
   function RefDesafios(){
     return ObtenerRef('desafios/');
+  }
+
+  function RefDesafioPorId(id){
+    return ObtenerRef('desafios/'+id);
   }
 
   function RefPuntuaciones(){

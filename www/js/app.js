@@ -7,7 +7,7 @@
 // 'starter.controllers' is found in controllers.js
 angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
 
-.run(function($ionicPlatform) {
+.run(function($ionicPlatform,$rootScope,UsuarioDesafio) {
   $ionicPlatform.ready(function() {
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
     // for form inputs)
@@ -20,6 +20,9 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
       // org.apache.cordova.statusbar required
       StatusBar.styleDefault();
     }
+
+    $rootScope.usuarioActual = UsuarioDesafio;
+
   });
 })
 
@@ -35,7 +38,8 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
     .state('tab', {
     url: '/tab',
     abstract: true,
-    templateUrl: 'templates/tabs.html'
+    templateUrl: 'templates/tabs.html',
+    controller: 'BaseCtrl'
   })
 
   // Each tab has its own nav history stack:
@@ -73,7 +77,8 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
   .state('desafios', {
     url: '/desafios',
     abstract: true,
-    templateUrl: 'templates/desafios/desafios.html'
+    templateUrl: 'templates/desafios/desafios.html',
+    controller: 'BaseCtrl'
   })
 
   .state('desafios.todos', {
