@@ -80,15 +80,28 @@ button.rta{
 	padding: 15px;
 }
 
-.board {
-	position: absolute;
-	width: 380px; 
-	height: 740px;
-	margin: 25px auto;
-	border: 2px solid #73B1B7;
-	border-radius: 10px;
+/*Batalla naval*/
+.batalla-mapa {
+    margin-left: 30%;
+    margin-top: 10%;	
 }
 
+.batalla-punto {
+	width:20px;
+	height:20px;
+	border: 1px solid black;
+	display:inline-block;
+}
+
+.batalla-punto-seleccionado {
+	width: 20px;
+	height:20px;
+	background-color: red;
+}
+
+
+
+/*kdshfkjdskj*/
 .displays {
 	position: relative;
 	margin: 25px;
@@ -151,7 +164,7 @@ button.rta{
 .points {
 	position: relative;
 	width: 29px;
-	height: 29px;
+	height: 19px;
 	border-top: 1px solid #8DEEEE;
 	border-right: 1px solid #8DEEEE;
 	display: inline-block;

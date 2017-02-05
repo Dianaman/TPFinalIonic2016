@@ -1,5 +1,6 @@
 <ion-view view-title="desafios-batalla">
 	<ion-content>
+    <!--<div class="board">
     	<div class="displays">
 	    	<div class="top">
 	      		<ul class="grid"></ul>
@@ -8,5 +9,17 @@
 	      		<ul class="grid"></ul>
 	    	</div>
   		</div>
+    </div>-->
+
+    	<div class="batalla-mapa">
+    		<!-- A -->
+    		<div class="batalla-punto" id="punto-a1" ng-click="selectPoint($event)"></div>
+    		<div class="batalla-punto" id="punto-a2" ng-click="selectPoint($event)"></div>
+    		<br>
+    		<!-- B -->
+    		<div class="batalla-punto" id="punto-b1" ng-click="selectPoint($event)"></div>
+    		<div class="batalla-punto" id="punto-b2" ng-click="selectPoint($event)"></div>
+    		<br>
+    	</div>
 	</ion-content>
 </ion-view>

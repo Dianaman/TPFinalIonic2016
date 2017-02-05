@@ -52,7 +52,32 @@ angular.module('starter.controllers', [])
 })
 
 .controller('DesafioBatallaCtrl', function($scope) {
+  $scope.desafio = {
+    cantidad: 1,
+    puntos: []
+  }
 
+  console.log(this);
+
+  $scope.selectPoint = function(event){
+    if(angular.element(event.target).hasClass('batalla-punto-seleccionado')){
+      angular.element(event.target).removeClass('batalla-punto-seleccionado');
+      $scope.desafio.puntos.splice($scope.desafio.puntos.indexOf(event.target.id),1);
+    }
+    else {
+      angular.element(event.target).addClass('batalla-punto-seleccionado');
+      $scope.desafio.puntos.push(event.target.id);
+    }
+
+    if($scope.desafio.cantidad == $scope.desafio.puntos.length){
+      //enviar a firebase
+      //si no hay error $state.go('desafios.juego');
+      //si hay error alert('ocurríó un error');
+      console.log($scope.desafio);
+      
+    }
+
+  }
 
 
   for (var i = 1; i <= 100; i++) {
