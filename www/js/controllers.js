@@ -167,8 +167,10 @@ angular.module('starter.controllers', [])
     $timeout(function (){
       var usuario = {};
 
-      SrvFirebase.RefUsuarios().orderByChild("usuario").equalTo($scope.respuestaToken.email).limitToFirst(1).on("value", function(snapshot) {
+      SrvFirebase.RefUsuarios().orderByChild("email").equalTo($scope.respuestaToken.email).limitToFirst(1).on("value", function(snapshot) {
         var usuarioExistente = snapshot.val();
+
+        console.info('usuarioExistente', usuarioExistente);
 
         UsuarioDesafio.login($scope.respuestaToken.email, $scope.respuestaToken.email, false); 
 
