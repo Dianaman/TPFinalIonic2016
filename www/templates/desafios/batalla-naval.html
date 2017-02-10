@@ -11,15 +11,24 @@
   		</div>
     </div>-->
 
-    	<div class="batalla-mapa">
-    		<!-- A -->
+    	<!--<div class="batalla-mapa">
+
     		<div class="batalla-punto" id="punto-a1" ng-click="selectPoint($event)"></div>
     		<div class="batalla-punto" id="punto-a2" ng-click="selectPoint($event)"></div>
     		<br>
-    		<!-- B -->
+
     		<div class="batalla-punto" id="punto-b1" ng-click="selectPoint($event)"></div>
     		<div class="batalla-punto" id="punto-b2" ng-click="selectPoint($event)"></div>
     		<br>
-    	</div>
+    	</div>-->
+
+		<table class="table-position">
+			<tr ng-repeat="i in ['a','b','c']">
+		    	<td ng-repeat="j in [1,2,3]" ng-click="selectPosition(i, j)"
+		        ng-class="[{'ts-li-selected' : userSelected(i,j)}]">{{ i+j }}</td>
+			</tr>
+		</table>
+
+		<button class="button button-block button-balanced" ng-click="EnviarPosiciones()" ng-disabled="btnEnviarDisabled">Enviar coordenadas</button>
 	</ion-content>
 </ion-view>

@@ -91,6 +91,16 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
     }
   })
 
+  .state('desafios.item', {
+    url: '/desafios/desafios/:item',
+    views: {
+      'desafios-item': {
+        templateUrl: 'templates/desafios/item.html',
+        controller: 'DesafioItemCtrl'
+      }
+    }
+  })
+
   .state('desafios.nuevo', {
     url: '/desafios/nuevo',
     views: {
@@ -106,7 +116,7 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
     views: {
       'desafios-batalla': {
         templateUrl: 'templates/desafios/batalla-naval.html',
-        controller: 'DesafioBatallaCtrl'
+        controller: 'BatallaCtrl'
       }
     }
   });

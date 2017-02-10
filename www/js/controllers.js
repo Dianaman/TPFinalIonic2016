@@ -258,7 +258,17 @@ angular.module('starter.controllers', [])
 })
 
 .controller('DesafioNuevoCtrl', function($scope, $state, $timeout, SrvFirebase) {
-  $scope.nuevoDesafio = {};
+  $scope.nuevoDesafio = {
+    usuario: '',
+    nombre: '',
+    tipo: '',
+    dificultad: 'facil',
+    cierre: '',
+    descripcion: '',
+    fecha_creacion: new Date().getTime(),
+    estado: 'abierto',
+    monto: 10
+  }
   
   $scope.crearDesafio = function(){
     var referencia = SrvFirebase.RefDesafios();
@@ -293,36 +303,124 @@ angular.module('starter.controllers', [])
 
 })
 
-.controller('DesafioBatallaCtrl', function($scope, SrvFirebase) {
+.controller('DesafioItemCtrl', function($scope, $stateParams, UsuarioDesafio, SrvFirebase) {
   /*Start Init*/
-  $scope.desafio = {
-    usuario: 'pepito',
-    cantidad: 1,
-    puntos: []
+  $scope.item = JSON.parse($stateParams.item);
+
+  var batalla, apuesta = {};
+  var fecha = new Date().getTime();
+
+  switch($scope.item.tipo){
+    case 'batalla':
+        var cantidad;
+
+        if($scope.item.dificultad == 'facil'){ cantidad = 1; }
+        else if($scope.item.dificultad == 'medio') { cantidad = 4; }
+        else { cantidad = 10; }
+
+        batalla = {
+          id_desafio: $scope.item.id,
+          usuario: $scope.item.usuario,
+          rival: UsuarioDesafio.nombre,
+          puntos_usuario: [],
+          puntos_rival: [],
+          cantidad: cantidad,
+          turnos_usuario: [],
+          turnos_rival: [],
+          fecha_creacion: fecha,
+          estado: 'pendiente',
+          ganador: null
+        };
+
+        break;
+    case 'apuesta':
+        apuesta = {
+          id_desafio: $scope.item.id,
+          usuario: $scope.item.usuario,
+          rival: UsuarioDesafio.nombre,
+          resultado: null,
+          eleccion_usuario: null,
+          eleccion_rival: null,
+          fecha_creacion: fecha,
+          estado: 'pendiente',
+          ganador: null
+        }
+
+        break;
   }
 
-  var referencia = SrvFirebase.RefDesafioPorId('-KbrHud49naMzRfTNnqm');
-  referencia.on('value', function(snapshot){
-    $scope.desafio = snapshot.val();
-    switch($scope.desafio.dificultad){
-      case "facil":
-          $scope.desafio.cantidad = 1;
-          break;
-      case "medio":
-          $scope.desafio.cantidad = 4;
-          break;
-      case "dificil":
-          $scope.desafio.cantidad = 10;
-          break;
+
+  
+
+  $scope.desafiar = function(){
+    switch($scope.item.tipo){
+
+      case 'batalla':
+
+        SrvFirebase.RefBatallas().push().set(batalla, function(error){
+          if(error){
+            alert('Ocurrió un error. Inténtalo nuevamente.');
+          }
+          else {
+            alert('Desafío exitoso, aguarde la respuesta de su oponente.');
+          }
+        });
+
+        break;
+
+      case 'apuesta':
+
+        SrvFirebase.RefApuestas().push().set(apuesta, function(error){
+          if(error){
+            alert('Ocurrió un error. Inténtalo nuevamente.');
+          }
+          else {
+            alert('Desafío exitoso, aguarde la respuesta de su oponente.');
+          }
+        });
+
+        break;
+    }
+  }
+})
+
+.controller('BatallaCtrl', function($scope){
+  /*Finish Init*/ 
+  $scope.puntos_usuario = ['b3', 'a1'];
+  $scope.btnEnviarDisabled = true;
+  $scope.batalla = {
+    cantidad: 3
+  }
+
+  $scope.userSelected =  function(fila, col){
+    console.log(fila+col);
+    return $scope.puntos_usuario.indexOf(fila+col) > -1;
+  }
+
+  $scope.selectPosition = function(fila, col){
+    //si la coordenada no estaba seleccionada
+    if($scope.puntos_usuario.indexOf(fila+col) == -1)
+    {
+
+      if($scope.batalla.cantidad > $scope.puntos_usuario.length){
+        $scope.puntos_usuario.push(fila+col);
+      }
+
+      //si igualo la cantidad de coordenadas a enviar
+      if($scope.batalla.cantidad == $scope.puntos_usuario.length){
+        $scope.btnEnviarDisabled = false;
+      }
     }
 
-    $scope.desafio.puntos = [];
-  })
+    //si la coordenada ya estaba entre las seleccionadas
+    else {
+      $scope.puntos_usuario.splice($scope.puntos_usuario.indexOf(fila+col),1);
+        $scope.btnEnviarDisabled = true;
+    }
+    console.log($scope.puntos_usuario);
 
-  /*Finish Init*/
 
-  $scope.selectPoint = function(event){
-    if(angular.element(event.target).hasClass('batalla-punto-seleccionado')){
+/*  if(angular.element(event.target).hasClass('batalla-punto-seleccionado')){
       angular.element(event.target).removeClass('batalla-punto-seleccionado');
       $scope.desafio.puntos.splice($scope.desafio.puntos.indexOf(event.target.id),1);
     }
@@ -342,7 +440,7 @@ angular.module('starter.controllers', [])
       }).catch(function(){
         alert('Ocurrió un error, intentalo más tarde.');
       });
-    }
+    }*/
   } 
 })
 
