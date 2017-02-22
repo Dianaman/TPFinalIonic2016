@@ -2,7 +2,7 @@ angular.module('starter.controllers', ['ngCordova'])
 
 .controller('BaseCtrl', function($rootScope, $scope, $ionicModal){
 
-  if($rootScope.usuarioActual.getName() == '' || $rootScope.usuarioActual.getName() == undefined){
+  if($rootScope.usuarioActual.getEmail() == '' || $rootScope.usuarioActual.getEmail() == undefined){
     $ionicModal.fromTemplateUrl('templates/login.html', {
       scope: $scope,
       animation: 'slide-in-up',
@@ -20,8 +20,10 @@ angular.module('starter.controllers', ['ngCordova'])
 
   $scope.loginData = {};
   $scope.registerData = {};
-  $scope.loginData.username = "";
+  $scope.loginData.username = "komoshi@gmail.com";
+  $scope.loginData.password = "123456";
   $scope.respuestaToken = {};
+  $scope.VerLogin = true;
 
 
   $scope.habilitado = true; //spinner login
@@ -167,12 +169,12 @@ angular.module('starter.controllers', ['ngCordova'])
     $timeout(function (){
       var usuario = {};
 
-      SrvFirebase.RefUsuarios().orderByChild("email").equalTo($scope.respuestaToken.email).limitToFirst(1).on("value", function(snapshot) {
+      SrvFirebase.RefUsuarios().orderByChild("email").equalTo($scope.respuestaToken.email).limitToFirst(1).on("child_added", function(snapshot) {
         var usuarioExistente = snapshot.val();
 
         console.info('usuarioExistente', usuarioExistente);
 
-        UsuarioDesafio.login($scope.respuestaToken.email, $scope.respuestaToken.email, false); 
+        UsuarioDesafio.login($scope.respuestaToken.email, snapshot.getKey(), usuarioExistente.creditos, usuarioExistente.soyAdmin); 
 
         if(!usuarioExistente){
           SrvFirebase.RefUsuarios().push(JSON.parse(UsuarioDesafio.getFullData()));
@@ -488,7 +490,7 @@ angular.module('starter.controllers', ['ngCordova'])
   } 
 })
 
-.controller('TiendaCtrl', function($scope, $ionicPlatform, $cordovaBarcodeScanner){
+.controller('TiendaCtrl', function($scope, $rootScope, $ionicPlatform, $cordovaBarcodeScanner, UsuarioDesafio){
 
   /*$scope.escanear = function(){
     $ionicPlatform.ready(function() {
@@ -512,21 +514,75 @@ angular.module('starter.controllers', ['ngCordova'])
     });
   }*/
 
+  $scope.creditos = {};
+
+
   try{
-  $scope.escanear = function(){
-    $ionicPlatform.ready(function(){
-      $cordovaBarcodeScanner.scan().then(function(imageData) {
-            alert(imageData.text);
-            console.log("Barcode Format -> " + imageData.format);
-            console.log("Cancelled -> " + imageData.cancelled);
-        }, function(error) {
-            console.log("An error happened -> " + error);
-        });
-    })
+
+
+    $scope.cargarCredito = function(){
+      var codigo = $scope.creditos.codigo;
+      console.log(codigo);
+
+      firebase.database().ref('codigos/').orderByChild("codigo").equalTo(codigo).limitToFirst(1).on("child_added", function(snapshot){
+        var codigoExistente = snapshot.val();
+
+        if(codigoExistente)
+        {
+          console.log(codigoExistente.disponible == true);
+          if(codigoExistente.disponible === true)
+          {
+            codigoExistente['usuario'] = UsuarioDesafio.getEmail();
+            codigoExistente['fecha'] = new Date().getTime();
+            codigoExistente['disponible'] = false;
+
+
+            firebase.database().ref('codigos/'+snapshot.key).update(codigoExistente, function(error){
+              if(error){
+                alert('Ocurrió un error, inténtelo nuevamente.');
+              }
+              else {
+                var creditoActual = UsuarioDesafio.getCred() + codigoExistente.monto;
+                var creditojson = {creditos: creditoActual}
+
+                firebase.database().ref('usuarios/'+UsuarioDesafio.getKey()).update(creditojson, function(error){
+                  if(error)
+                  {
+                    alert('Ocurrió un error, inténtelo nuevamente.')
+                  }
+                  else {
+                    alert('Tu crédito ha sido cargado.');
+                    $rootScope.usuarioActual.creditos = creditoActual;
+                  }
+                });
+              }
+            }); //firebase update codigo
+          }
+          else {
+            alert('El código ya ha sido utilizado. Contáctate con algún administrador.');
+          }
+        }
+        else {
+          alert('El código es inexistente');
+        }
+      });
+    };
+
+
+    $scope.escanear = function(){
+      $ionicPlatform.ready(function(){
+        $cordovaBarcodeScanner.scan().then(function(imageData) {
+              alert(imageData.text);
+              console.log("Barcode Format -> " + imageData.format);
+              console.log("Cancelled -> " + imageData.cancelled);
+          }, function(error) {
+              console.log("An error happened -> " + error);
+          });
+      })
+    }
+  }catch(e){
+    console.error(e);
   }
-}catch(e){
-  console.error(e);
-}
 })
 
 

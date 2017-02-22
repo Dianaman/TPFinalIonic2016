@@ -1,25 +1,30 @@
 angular.module('starter.services', [])
 
 .factory('UsuarioDesafio',[function(){
-  var nombre = "";
   var email = "";
+  var fbKey = "";
+  var creditos = 0;
   var soyAdmin = false;
 
   return {
-    login:function(name,mail,admin){
-      nombre = name;
+    login:function(mail,key, credits, admin){
       email = mail;
+      fbKey = key;
+      creditos = credits;
       soyAdmin = admin;
-    },getName:function(){
-      return nombre;
     },getEmail:function(){
       return email;
+    },getKey:function(){
+      return fbKey;
+    },getCred:function(){
+      return creditos;
     },isAdmin:function(){
       return soyAdmin;
     },getFullData:function(){
       var jsonUsuario = {};
-      jsonUsuario.nombre = nombre;
       jsonUsuario.email = email;
+      jsonUsuario.fbKey = key;
+      jsonUsuario.creditos = credits;
       jsonUsuario.soyAdmin = soyAdmin;
       return JSON.stringify(jsonUsuario);
     }
