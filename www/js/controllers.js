@@ -1,4 +1,4 @@
-angular.module('starter.controllers', [])
+angular.module('starter.controllers', ['ngCordova'])
 
 .controller('BaseCtrl', function($rootScope, $scope, $ionicModal){
 
@@ -203,7 +203,7 @@ angular.module('starter.controllers', [])
   }
 
   $scope.IrATienda = function(){
-    $state.go('store');
+    $state.go('tab.tienda');
   }
 
   $scope.VerRanking = function(){
@@ -384,13 +384,28 @@ angular.module('starter.controllers', [])
   }
 })
 
-.controller('BatallaCtrl', function($scope){
+.controller('BatallaCtrl', function($scope, SrvFirebase, $stateParams){
   /*Finish Init*/ 
-  $scope.puntos_usuario = ['b3', 'a1'];
+  $scope.puntos_usuario = [];
   $scope.btnEnviarDisabled = true;
-  $scope.batalla = {
-    cantidad: 3
-  }
+  $scope.batalla = {};
+
+  $scope.puntos = {};
+  $scope.datos = {
+    monto_punto: 10,
+    monto: $scope.batalla.monto
+  };
+
+  var id = JSON.parse($stateParams.Id);
+
+  SrvFirebase.RefBatallas().orderByChild("id").equalTo(id).limitToFirst(1).on("value", function(snapshot){
+    if(snapshot){
+      $scope.batalla = snapshot.val();
+    }
+    else {
+      alert('Ocurrió un error. Inténtalo nuevamente.');
+    }
+  });
 
   $scope.userSelected =  function(fila, col){
     console.log(fila+col);
@@ -402,23 +417,52 @@ angular.module('starter.controllers', [])
     if($scope.puntos_usuario.indexOf(fila+col) == -1)
     {
 
-      if($scope.batalla.cantidad > $scope.puntos_usuario.length){
-        $scope.puntos_usuario.push(fila+col);
+      if($scope.datos.monto >= $scope.datos.monto_punto){
+        $scope.datos.monto -= $scope.datos.monto_punto;
+        $scope.puntos[fila+col] = $scope.datos.monto_punto;
+
+        if($scope.batalla.cantidad > $scope.puntos_usuario.length){
+        
+          $scope.puntos_usuario.push(fila+col);
+        }
+
+
+        //si igualo la cantidad de coordenadas a enviar
+        if($scope.batalla.cantidad == $scope.puntos_usuario.length){
+          if($scope.datos.monto == 0){
+            $scope.btnEnviarDisabled = false;
+          }
+          else{
+            alert('La cantidad de créditos en juego debe ser igual a '+$scope.batalla.monto);
+          }
+        }
+      }
+      else {
+
+        alert('No puede apostar esa cantidad, seleccione un monto inferior.');
       }
 
-      //si igualo la cantidad de coordenadas a enviar
-      if($scope.batalla.cantidad == $scope.puntos_usuario.length){
-        $scope.btnEnviarDisabled = false;
-      }
     }
 
     //si la coordenada ya estaba entre las seleccionadas
     else {
       $scope.puntos_usuario.splice($scope.puntos_usuario.indexOf(fila+col),1);
         $scope.btnEnviarDisabled = true;
+        $scope.datos.monto += $scope.puntos[fila+col];
+        delete $scope.puntos[fila+col];
     }
     console.log($scope.puntos_usuario);
 
+    $scope.EnviarPosiciones = function(){
+      SrvFirebase.RefBatallas().push().set(batalla, function(error){
+          if(error){
+            alert('Ocurrió un error. Inténtalo nuevamente.');
+          }
+          else {
+            alert('Desafío exitoso, aguarde la respuesta de su oponente.');
+          }
+        });
+    }
 
 /*  if(angular.element(event.target).hasClass('batalla-punto-seleccionado')){
       angular.element(event.target).removeClass('batalla-punto-seleccionado');
@@ -443,5 +487,47 @@ angular.module('starter.controllers', [])
     }*/
   } 
 })
+
+.controller('TiendaCtrl', function($scope, $ionicPlatform, $cordovaBarcodeScanner){
+
+  /*$scope.escanear = function(){
+    $ionicPlatform.ready(function() {
+      $cordovaBarcodeScanner
+        .scan()
+        .then(function(barcodeData) {
+          // Success! Barcode data is here
+        }, function(error) {
+          // An error occurred
+        });
+
+
+      // NOTE: encoding not functioning yet
+      $cordovaBarcodeScanner
+        .encode(BarcodeScanner.Encode.TEXT_TYPE, "http://www.nytimes.com")
+        .then(function(success) {
+          // Success!
+        }, function(error) {
+          // An error occurred
+        });
+    });
+  }*/
+
+  try{
+  $scope.escanear = function(){
+    $ionicPlatform.ready(function(){
+      $cordovaBarcodeScanner.scan().then(function(imageData) {
+            alert(imageData.text);
+            console.log("Barcode Format -> " + imageData.format);
+            console.log("Cancelled -> " + imageData.cancelled);
+        }, function(error) {
+            console.log("An error happened -> " + error);
+        });
+    })
+  }
+}catch(e){
+  console.error(e);
+}
+})
+
 
 ;

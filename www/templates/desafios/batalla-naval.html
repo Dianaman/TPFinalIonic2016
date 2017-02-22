@@ -21,6 +21,9 @@
     		<div class="batalla-punto" id="punto-b2" ng-click="selectPoint($event)"></div>
     		<br>
     	</div>-->
+    	<input type="number" ng-model="datos.monto" disabled/>
+    	
+    	<input type="number" ng-model="datos.monto_punto" min="10" max="{{datos.monto}}" step="10"/>
 
 		<table class="table-position">
 			<tr ng-repeat="i in ['a','b','c']">

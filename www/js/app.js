@@ -64,6 +64,16 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
     }
   })
 
+  .state('tab.tienda', {
+    url: '/tienda',
+    views: {
+      'tab-tienda': {
+        templateUrl: 'templates/tab-tienda.html',
+        controller: 'TiendaCtrl'
+      }
+    }
+  })
+
   .state('tab.ranking', {
     url: '/ranking',
     views: {
@@ -112,7 +122,7 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
   })
 
   .state('desafios.batallanaval', {
-    url: '/desafios/batalla',
+    url: '/desafios/batalla/:id',
     views: {
       'desafios-batalla': {
         templateUrl: 'templates/desafios/batalla-naval.html',
