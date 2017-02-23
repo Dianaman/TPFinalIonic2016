@@ -36,6 +36,8 @@ angular.module('starter.services', [])
   this.RefUsuarios = RefUsuarios;
   this.RefDesafios = RefDesafios;
   this.RefDesafioPorId = RefDesafioPorId;
+  this.RefBatallas = RefBatallas;
+  this.RefApuestas = RefApuestas;
   this.RefPuntuaciones = RefPuntuaciones;
   this.EnviarNotificacion = EnviarNotificacion;
 
@@ -54,6 +56,13 @@ angular.module('starter.services', [])
 
   function RefDesafioPorId(id){
     return ObtenerRef('desafios/'+id);
+  }
+
+  function RefBatallas(){
+    return ObtenerRef('batallas/');
+  }
+  function RefApuestas(){
+    return ObtenerRef('apuestas/');
   }
 
   function RefPuntuaciones(){

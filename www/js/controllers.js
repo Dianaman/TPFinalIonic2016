@@ -2,7 +2,7 @@ angular.module('starter.controllers', ['ngCordova'])
 
 .controller('BaseCtrl', function($rootScope, $scope, $ionicModal){
 
-  if($rootScope.usuarioActual.getEmail() == '' || $rootScope.usuarioActual.getEmail() == undefined){
+  if($rootScope.usuarioActual == undefined || $rootScope.usuarioActual.getEmail() == '' || $rootScope.usuarioActual.getEmail() == undefined){
     $ionicModal.fromTemplateUrl('templates/login.html', {
       scope: $scope,
       animation: 'slide-in-up',
@@ -148,13 +148,15 @@ angular.module('starter.controllers', ['ngCordova'])
         
 
         if (window.cordova) {
-          if ($scope.respuestaToken.email == "komoshi@gmail.com") {
+          /*if ($scope.respuestaToken.email == "komoshi@gmail.com") {
             UsuarioDesafio.login($scope.respuestaToken.email, $scope.respuestaToken.email, true);
             $scope.closeLogin();
           } else {
             UsuarioDesafio.login($scope.respuestaToken.email, $scope.respuestaToken.email, false);
             $scope.closeLogin();
-          }
+          }*/
+
+          TraerUsuario();
         } else {
           if($scope.respuestaToken != null){
             TraerUsuario();
@@ -169,12 +171,12 @@ angular.module('starter.controllers', ['ngCordova'])
     $timeout(function (){
       var usuario = {};
 
-      SrvFirebase.RefUsuarios().orderByChild("email").equalTo($scope.respuestaToken.email).limitToFirst(1).on("child_added", function(snapshot) {
+      SrvFirebase.RefUsuarios().orderByChild("email").equalTo($scope.loginData.username).limitToFirst(1).on("child_added", function(snapshot) {
         var usuarioExistente = snapshot.val();
 
         console.info('usuarioExistente', usuarioExistente);
 
-        UsuarioDesafio.login($scope.respuestaToken.email, snapshot.getKey(), usuarioExistente.creditos, usuarioExistente.soyAdmin); 
+        UsuarioDesafio.login(usuarioExistente.email, snapshot.getKey(), usuarioExistente.creditos, usuarioExistente.soyAdmin); 
 
         if(!usuarioExistente){
           SrvFirebase.RefUsuarios().push(JSON.parse(UsuarioDesafio.getFullData()));
@@ -225,27 +227,6 @@ angular.module('starter.controllers', ['ngCordova'])
   }
 })
 
-.controller('DesafiosCtrl', function($scope) {
-  $scope.listaDeDesafios = [];
-
-  $scope.listaDeDesafios = [{
-    id: 00001,
-    nombre: 'desafio1',
-    autor: 'pepito',
-    estado: 'activo'
-  },{
-    id: 00002,
-    nombre: 'desafio1',
-    autor: 'pepito',
-    estado: 'cerrado'
-  },{
-    id: 00003,
-    nombre: 'Desafienme',
-    autor: 'cielito',
-    estado: 'abierto'
-  }]
-})
-
 
 .controller('RankingCtrl', function($scope, $ionicPlatform, $timeout, SrvFirebase){
   $scope.puntuaciones = [];
@@ -259,9 +240,26 @@ angular.module('starter.controllers', ['ngCordova'])
   })
 })
 
-.controller('DesafioNuevoCtrl', function($scope, $state, $timeout, SrvFirebase) {
+.controller('DesafiosCtrl', function($scope, SrvFirebase, $state) {
+  $scope.listaDeDesafios = [];
+
+  var refDesafios = SrvFirebase.RefDesafios();
+  refDesafios.orderByChild("estado").equalTo("abierto").on("child_added", function(snapshot){
+    $scope.listaDeDesafios.push(snapshot.val());
+  });
+
+  $scope.verDesafio = function(desafio){
+    var des = JSON.stringify(desafio);
+
+    $state.go('desafios.item', {item: des});
+  }
+
+})
+
+
+.controller('DesafioNuevoCtrl', function($scope, $state, $timeout, SrvFirebase, UsuarioDesafio) {
   $scope.nuevoDesafio = {
-    usuario: '',
+    usuario: UsuarioDesafio.getEmail(),
     nombre: '',
     tipo: '',
     dificultad: 'facil',
@@ -273,6 +271,9 @@ angular.module('starter.controllers', ['ngCordova'])
   }
   
   $scope.crearDesafio = function(){
+
+
+
     var referencia = SrvFirebase.RefDesafios();
     var referenciaFirebase = referencia.push();
 
@@ -323,7 +324,7 @@ angular.module('starter.controllers', ['ngCordova'])
         batalla = {
           id_desafio: $scope.item.id,
           usuario: $scope.item.usuario,
-          rival: UsuarioDesafio.nombre,
+          rival: UsuarioDesafio.getEmail(),
           puntos_usuario: [],
           puntos_rival: [],
           cantidad: cantidad,
@@ -339,7 +340,7 @@ angular.module('starter.controllers', ['ngCordova'])
         apuesta = {
           id_desafio: $scope.item.id,
           usuario: $scope.item.usuario,
-          rival: UsuarioDesafio.nombre,
+          rival: UsuarioDesafio.getEmail(),
           resultado: null,
           eleccion_usuario: null,
           eleccion_rival: null,
@@ -355,6 +356,10 @@ angular.module('starter.controllers', ['ngCordova'])
   
 
   $scope.desafiar = function(){
+    console.log(batalla);
+    console.log(apuesta);
+
+
     switch($scope.item.tipo){
 
       case 'batalla':
@@ -384,6 +389,8 @@ angular.module('starter.controllers', ['ngCordova'])
         break;
     }
   }
+
+
 })
 
 .controller('BatallaCtrl', function($scope, SrvFirebase, $stateParams){

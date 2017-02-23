@@ -1,5 +1,11 @@
 <ion-view view-title="Nuevo desafio">
   <ion-content class="padding">
-  	
+  	<div class="tarjeta">
+	  	<h1>{{item.nombre}}</h1>
+	  	<p>{{item.usuario}}</p>
+	  	<p>{{item.monto}}</p>
+
+	  	<button class="button button-block button-balanced" ng-click="desafiar()">Desafiar</button>	
+  	</div>
   </ion-content>
 </ion-view>

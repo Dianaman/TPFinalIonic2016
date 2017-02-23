@@ -119,8 +119,46 @@ button.rta{
 }
 
 
+h2 {
+	color: black;
+	letter-spacing: 0.5rem;
+	font-size: 2rem;
+}
 
-/*kdshfkjdskj*/
+.bgbatalla {
+	background-color: #12AF2F;
+}
+
+.bgapuesta {
+	background-color: #F3F628;
+}
+
+.monto {
+	display:inline;
+	float:right;
+	font-size: 30px;
+	color: green;
+}
+
+.tarjeta {
+	width: 70%;
+	height:70vh;
+	margin: 10% 15%;
+	padding: 2%;
+	background-color:white;
+	border-radius: 25px;
+	color:black;
+}
+.tarjeta h1 {
+	color: royalblue;
+}
+
+.tarjeta button {
+	width: 50%;
+	margin-left: 25%;
+}
+/*
+
 .displays {
 	position: relative;
 	margin: 25px;
@@ -208,3 +246,4 @@ button.rta{
 	border-radius: 50%;
 	display: table;
 }
+*/
