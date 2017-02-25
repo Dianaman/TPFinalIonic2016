@@ -2,46 +2,75 @@
   <ion-content class="padding">
   	<div class="list">
 	  	<label class="item item-input">
-	  		<input type="text" ng-model="nuevoDesafio.nombre" placeholder="Nombre del desafío">
+		  	<span class="input-label">Nombre del desafío</span>
+	  		<input type="text" ng-model="opciones.nombre">
 	  	</label>
-	  	<div class="item">
-	  		<span class="input-label" style="display:inline-block">Tipo de juego</span>
-	  		<div style="width:25%;display:inline-block;">Batalla <input type="radio" ng-model="nuevoDesafio.tipo" ng-value="'batalla'"></div>
-	  		<div style="width:25%;display:inline-block;">Apuesta <input type="radio" ng-model="nuevoDesafio.tipo" ng-value="'apuesta'"></div>
-	  	</div>
-
-	  	<!--Creación de juego tipo apuesta -->
-	  	<div ng-show="nuevoDesafio.tipo=='apuesta'">
-	  		<label class="item item-input">
-	  			<input type="text" placeholder="Descripción de la apuesta" name="nuevoDesafio.descripcion">
-	  		</label>
-	  		<label class="item item-input">
-		  		<div class="item" ion-datetime-picker ng-model="nuevoDesafio.fechadecierre" only-valid="{'after': auxiliar.fechaactual, 'inclusive': false}">
-			        {{nuevoDesafio.fechadecierre| date: "yyyy-MM-dd H:mm"}}
-			    </div>
-		    </label>
-	  	</div>
-
-	  	<!-- Creación de juego tipo batalla naval -->
-	  	<div ng-show="nuevoDesafio.tipo=='batalla'">
-	  		<label class="item item-input">
-			  	<select name="nuevoDesafio.dificultad" ng-model="nuevoDesafio.dificultad">
-			  		<option selected disabled hidden>Nivel de dificultad</option>
-			  		<option value="facil">Fácil (6x6)</option>
-			  		<option value="medio">Medio (12x12)</option>
-			  		<option value="dificil">Difícil (20x20)</option>
-			  	</select>
-		  	</label>
-
-	  	</div>
 
 	  	<!-- Creación de juego genérico -->
 	  	<label class="item item-input">
 		  	<span class="input-label">Cantidad a apostar</span>
-		  	<input type="number" ng-model="nuevoDesafio.cantidad" min="10" max="1000" step="10" required>
+		  	<input type="number" ng-model="opciones.monto" min="10" max="1000" step="10" ng-change="actualizarMonto()" required>
 	  	</label>
 
-	  	<button class="button button-block button-balanced" ng-click="crearDesafio()">Crear desafío</button>
+	  	<div class="item">
+
+	  		<span class="input-label" style="display:inline-block;float:left">Tipo de juego</span>
+	  		<div style="width:25%;display:inline-block;">Batalla <input type="radio" ng-model="opciones.tipo" ng-value="'batalla'" ng-change="actualizarTipo()"></div>
+	  		<div style="width:25%;display:inline-block;">Apuesta <input type="radio" ng-model="opciones.tipo" ng-value="'apuesta'" ng-change="actualizarTipo()"></div>
+	  	</div>
+
+	  	<!--Creación de juego tipo apuesta -->
+	  	<div ng-show="opciones.tipo=='apuesta'">
+	  		<label class="item item-input">
+			  	<span class="input-label">Descripción de la apuesta</span>
+	  			<input type="text" name="opciones.descripcion">
+	  		</label>
+	  		<label class="item item-input">
+		  		<span class="input-label">Fecha del resultado</span>
+		  		<div class="item" ion-datetime-picker ng-model="opciones.fechadecierre" only-valid="{'after': auxiliar.fechaactual, 'inclusive': false}" ng-show="opciones.esmobile" ng-click="ElegirFecha()">
+			        {{opciones.fechadecierre| date: "yyyy-MM-dd H:mm"}}
+			    </div>
+
+				<input type="datetime-local" ng-model="denuncia.fechadecierre" ng-show="!opciones.esmobile">
+		    </label>
+	  	</div>
+
+	  	<!-- Creación de juego tipo batalla naval -->
+	  	<div ng-show="opciones.tipo=='batalla'">
+	  		<label class="item item-input">
+		  		<span class="input-label">Nivel de dificultad</span>
+			  	<select name="opciones.dificultad" ng-model="opciones.dificultad" ng-change="actualizarGrilla()">
+			  		<option value="facil" selected>Fácil (3x3)</option>
+			  		<option value="medio">Medio (5x5)</option>
+			  		<option value="dificil">Difícil (7x7)</option>
+			  	</select>
+		  	</label>
+
+
+		  	<input type="number" ng-model="datos.monto" disabled/>
+	    	
+	    	<input type="number" ng-model="datos.monto_punto" min="10" max="{{datos.monto}}" step="10"/>
+
+			<table class="table-position" >
+				<tr ng-repeat="i in datos.batalla_cols">
+			    	<td ng-repeat="j in datos.batalla_rows" ng-click="selectPosition(i, j)"
+			        ng-class="[{'ts-li-selected' : userSelected(i,j)}]">{{ i+j }}</td>
+				</tr>
+			</table>
+
+			<button class="button button-block button-balanced" ng-click="crearDesafio()" ng-disabled="btnEnviarDisabled">Desafiar</button>
+	  	</div>
+
+	  	<div ng-if="opciones.tipo == 'apuesta'">
+		  	<label class="item item-input">
+			  	<span class="input-label">Tu apuesta:</span>
+			  	<input type="number" ng-model="apuesta.eleccion_usuario">
+		  	</label>
+
+	  		<button class="button button-block button-balanced" ng-click="crearDesafio()" ng-disabled="apuesta.eleccion_usuario == '' || apuesta.eleccion_usuario == null">Desafiar</button>	
+
+	  	</div>
+
   	</div>
   </ion-content>
 </ion-view>

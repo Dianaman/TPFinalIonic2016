@@ -85,14 +85,15 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
   })
 
   .state('desafios', {
-    url: '/desafios',
+    url: '/desafio',
     abstract: true,
+    cache:false,
     templateUrl: 'templates/desafios/desafios.html',
     controller: 'BaseCtrl'
   })
 
   .state('desafios.todos', {
-    url: '/desafios/desafios',
+    url: '/desafios-todos',
     views: {
       'desafios-todos': {
         templateUrl: 'templates/desafios/todos.html',
@@ -102,17 +103,24 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
   })
 
   .state('desafios.item', {
-    url: '/desafios/desafios/:item',
+    url: '/desafios-item/:item',
+    cache:false,
     views: {
       'desafios-item': {
         templateUrl: 'templates/desafios/item.html',
         controller: 'DesafioItemCtrl'
+        /*,views: {
+          'desafios-batalla': {
+            templateUrl: 'templates/desafios/batalla-naval.html',
+            controller: 'BatallaCtrl'
+          }
+        }*/
       }
     }
   })
 
   .state('desafios.nuevo', {
-    url: '/desafios/nuevo',
+    url: '/desafios-nuevo',
     views: {
       'desafios-nuevo': {
         templateUrl: 'templates/desafios/nuevo.html',
@@ -121,8 +129,20 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
     }
   })
 
+  .state('desafios.tipo', {
+    url: '/desafios-tipo',
+    cache:false,
+    views: {
+      'desafios-tipo': {
+        templateUrl: 'templates/desafios/tipo.html',
+        controller: 'TipoCtrl'
+      }
+    }
+  })
+
   .state('desafios.batallanaval', {
-    url: '/desafios/batalla/:id',
+    url: '/desafios-batalla/',
+    cache:false,
     views: {
       'desafios-batalla': {
         templateUrl: 'templates/desafios/batalla-naval.html',

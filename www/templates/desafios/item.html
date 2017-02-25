@@ -1,11 +1,33 @@
 <ion-view view-title="Nuevo desafio">
+regtrehgtre
   <ion-content class="padding">
   	<div class="tarjeta">
 	  	<h1>{{item.nombre}}</h1>
 	  	<p>{{item.usuario}}</p>
 	  	<p>{{item.monto}}</p>
 
-	  	<button class="button button-block button-balanced" ng-click="desafiar()">Desafiar</button>	
+	  	<div ng-if="item.tipo == 'batalla'">
+		  	<input type="number" ng-model="datos.monto" disabled/>
+	    	
+	    	<input type="number" ng-model="datos.monto_punto" min="10" max="{{datos.monto}}" step="10"/>
+
+			<table class="table-position" >
+				<tr ng-repeat="i in datos.batalla_cols">
+			    	<td ng-repeat="j in datos.batalla_rows" ng-click="selectPosition(i, j)"
+			        ng-class="[{'ts-li-selected' : userSelected(i,j)}]">{{ i+j }}</td>
+				</tr>
+			</table>
+
+			<button class="button button-block button-balanced" ng-click="desafiar()" ng-disabled="btnEnviarDisabled">Desafiar</button>
+	  	</div>
+
+	  	<div ng-if="item.tipo == 'apuesta'">
+	  		<label name="Tu elección:"/><input type="number" ng-model="apuesta.eleccion_rival" style="border:1px solid grey"/>
+
+	  		<button class="button button-block button-balanced" ng-click="desafiar()" ng-disabled="apuesta.eleccion_rival == '' || apuesta.eleccion_rival == null">Desafiar</button>	
+
+	  	</div>
+
   	</div>
   </ion-content>
 </ion-view>

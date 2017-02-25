@@ -37,7 +37,9 @@ angular.module('starter.services', [])
   this.RefDesafios = RefDesafios;
   this.RefDesafioPorId = RefDesafioPorId;
   this.RefBatallas = RefBatallas;
+  this.RefBatallasPorId = RefBatallasPorId;
   this.RefApuestas = RefApuestas;
+  this.RefApuestasPorId = RefApuestasPorId;
   this.RefPuntuaciones = RefPuntuaciones;
   this.EnviarNotificacion = EnviarNotificacion;
 
@@ -46,6 +48,10 @@ angular.module('starter.services', [])
 
   }
 
+  function RefUsuarios(){
+    return ObtenerRef('usuarios/');
+  }
+  
   function RefUsuarios(){
     return ObtenerRef('usuarios/');
   }
@@ -61,8 +67,17 @@ angular.module('starter.services', [])
   function RefBatallas(){
     return ObtenerRef('batallas/');
   }
+
+  function RefBatallasPorId(id){
+    return ObtenerRef('batallas/'+id+'/');
+  }
+
   function RefApuestas(){
     return ObtenerRef('apuestas/');
+  }
+
+  function RefApuestasPorId(id){
+    return ObtenerRef('apuestas/'+id+'/');
   }
 
   function RefPuntuaciones(){
@@ -71,13 +86,13 @@ angular.module('starter.services', [])
 
   function EnviarNotificacion(){
     var http = new XMLHttpRequest();
-    /*var url =  'https://fcm.googleapis.com/fcm/send';
+    var url =  'https://fcm.googleapis.com/fcm/send';
     
     var params = JSON.stringify({
             "to":"/topics/all", //Topic or single device
         "notification":{
-            "title":"Autopistas Delorean",  //Any value
-            "body":"Una nueva Denuncia fue ingresada.",  //Any value
+            "title":"Desafios",  //Any value
+            "body":"Una nuevo desafío fue ingresado.",  //Any value
             "sound":"default", //If you want notification sound
             "click_action":"FCM_PLUGIN_ACTIVITY",  //Must be present for Android
             "icon":"fcm_push_icon"  //White icon Android resource
@@ -87,13 +102,13 @@ angular.module('starter.services', [])
 
     http.open("POST", url, true);
       http.setRequestHeader("Content-type", "application/json");
-      http.setRequestHeader('Authorization', 'key=AIzaSyDrcIOmidimEhCPJIGqlSJJQQ-9i0_yLKc');
+      http.setRequestHeader('Authorization', 'key=AIzaSyCchqZQC6XekhnEpExiLL461cSxltAuTLI');
 
       http.onreadystatechange = function() {
           if(http.readyState == 4 && http.status == 200) {
               console.log(http.responseText);
           }
       }
-      http.send(params);*/
+      http.send(params);
     }
 }]);
