@@ -129,23 +129,22 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
     }
   })
 
-  .state('desafios.tipo', {
-    url: '/desafios-tipo',
+  .state('desafios.misdesafios', {
+    url: '/desafios-misdesafios',
     cache:false,
     views: {
-      'desafios-tipo': {
-        templateUrl: 'templates/desafios/tipo.html',
-        controller: 'TipoCtrl'
+      'desafios-misdesafios': {
+        templateUrl: 'templates/desafios/misdesafios.html',
+        controller: 'MisDesafiosCtrl'
       }
     }
   })
 
-  .state('desafios.batallanaval', {
-    url: '/desafios-batalla/',
-    cache:false,
+  .state('desafios.batalla', {
+    url: '/desafios-batalla/:batalla',
     views: {
       'desafios-batalla': {
-        templateUrl: 'templates/desafios/batalla-naval.html',
+        templateUrl: 'templates/desafios/batallanaval.html',
         controller: 'BatallaCtrl'
       }
     }

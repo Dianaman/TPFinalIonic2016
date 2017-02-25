@@ -245,6 +245,11 @@ console.log(respuesta);
 
 
 .controller('DashCtrl', function($scope, $state) {
+
+  $scope.MisDesafios = function(){
+    $state.go('desafios.misdesafios');
+  }
+
   $scope.VerDesafios = function(){
     $state.go('desafios.todos');
   }
@@ -316,7 +321,7 @@ console.log(respuesta);
       }
 
     });  
-  });  
+  }, 10000);  
 
 
 
@@ -386,7 +391,7 @@ console.log(respuesta);
           turnos_usuario: [],
           turnos_rival: [],
           fecha_creacion: $scope.item.fecha_creacion,
-          estado: 'pendiente',
+          estado: 'jugando',
           ganador: null
         };
 
@@ -404,7 +409,7 @@ console.log(respuesta);
           eleccion_usuario: $scope.item.eleccion_usuario,
           eleccion_rival: '',
           fecha_creacion: $scope.item.fecha_creacion,
-          estado: 'pendiente',
+          estado: 'jugando',
           ganador: null
         }
 
@@ -477,7 +482,6 @@ console.log(respuesta);
       case 'batalla':
 
         $scope.batalla.puntos_rival = $scope.puntos;
-//firebase.database().ref('codigos/'+snapshot.key).update(codigoExistente, function(error){
             
         SrvFirebase.RefBatallasPorId($scope.batalla.id_desafio).update($scope.batalla, function(error){
           if(error){
@@ -743,7 +747,98 @@ console.log(respuesta);
   }
 })
 
-.controller('BatallaCtrl', function($scope, SrvFirebase, $stateParams){
+.controller('MisDesafiosCtrl', function($scope, $state, $timeout, SrvFirebase, UsuarioDesafio) {
+    $scope.listaDeDesafios = [];
+
+  $timeout(function(){
+    var refBatallas = SrvFirebase.RefBatallas();
+    refBatallas.orderByChild("usuario").equalTo(UsuarioDesafio.getEmail()).on("child_added", function(snapshot){
+      var desafio = snapshot.val();
+      console.log(snapshot.getKey());
+      desafio.id_desafio = snapshot.getKey();
+
+      desafio.tipo = 'batalla';
+
+      var yo = desafio.turnos_usuario == undefined ? 0 : desafio.turnos_usuario.length;
+      var otro = desafio.turnos_rival == undefined ? 0 : desafio.turnos_rival.length;
+
+      if(desafio.estado == 'jugando' || desafio.estado == 'abierto'){
+
+        if(desafio.estado == 'jugando'){
+          if(yo == otro){ desafio.turno = 'ahora'; }
+          else { desafio.turno = 'espera'; }
+        }
+
+        $scope.listaDeDesafios.push(desafio);
+      }
+    });
+
+    refBatallas.orderByChild("rival").equalTo(UsuarioDesafio.getEmail()).on("child_added", function(snapshot){
+      var desafio = snapshot.val();
+      console.log(snapshot.val());
+      desafio.id_desafio = snapshot.getKey();
+
+      desafio.tipo = 'batalla';
+
+      var otro = desafio.turnos_usuario == undefined ? 0 : desafio.turnos_usuario.length;
+      var yo = desafio.turnos_rival == undefined ? 0 : desafio.turnos_rival.length;
+
+      if(desafio.estado == 'jugando' || desafio.estado == 'abierto'){
+
+        if(desafio.estado == 'jugando'){
+          if(otro > yo){ desafio.turno = 'ahora'; }
+          else { desafio.turno = 'espera'; }
+        }
+
+        $scope.listaDeDesafios.push(desafio);
+      }
+    });
+
+    var refApuestas = SrvFirebase.RefApuestas();
+    refApuestas.orderByChild("usuario").equalTo(UsuarioDesafio.getEmail()).on("child_added", function(snapshot){
+      var desafio = snapshot.val();
+      console.log(snapshot.val());
+      desafio.id_desafio = snapshot.getKey();
+
+      desafio.tipo = 'apuesta';
+
+      if(desafio.estado == 'jugando' || desafio.estado == 'abierto'){
+        $scope.listaDeDesafios.push(desafio);
+      }
+    });
+
+    var refApuestas = SrvFirebase.RefApuestas();
+    refApuestas.orderByChild("rival").equalTo(UsuarioDesafio.getEmail()).on("child_added", function(snapshot){
+      var desafio = snapshot.val();
+      console.log(snapshot.val());
+      desafio.id_desafio = snapshot.getKey();
+
+      desafio.tipo = 'apuesta';
+
+      if(desafio.estado == 'jugando' || desafio.estado == 'abierto'){
+        $scope.listaDeDesafios.push(desafio);
+      }
+    });    
+  });  
+
+
+
+  $scope.verDesafio = function(desa){
+    var des = desa.id_desafio;
+    console.log(des);
+
+    if(desa.tipo == 'batalla'){
+
+      $state.go('desafios.batalla', {batalla: des});
+    }
+    else {
+      $state.go('desafios.apuesta', des);
+    }
+  }
+
+})
+
+.controller('BatallaCtrl', function($scope, SrvFirebase, $stateParams, $timeout){
   /*Finish Init*/ 
 
   $scope.puntos_usuario = [];
@@ -756,24 +851,48 @@ console.log(respuesta);
     monto: $scope.batalla.monto
   };
 
-  var id = JSON.parse($stateParams.Id);
+  console.log($stateParams);
 
-  SrvFirebase.RefBatallas().orderByChild("id").equalTo(id).limitToFirst(1).on("value", function(snapshot){
-    if(snapshot){
-      $scope.batalla = snapshot.val();
-    }
-    else {
-      alert('Ocurrió un error. Inténtalo nuevamente.');
-    }
-  });
+  var id = $stateParams.batalla;
+
+  $timeout(function(){
+    SrvFirebase.RefBatallas().orderByChild("id").equalTo(id).limitToFirst(1).on("value", function(snapshot){
+      if(snapshot){
+        $scope.batalla = snapshot.val();
+
+
+        
+        /*if($scope.batalla){
+
+          for (var name in $scope.batalla.puntos_rival) {
+            console.log(name + "=" + $scope.batalla.puntos_rival[name]);
+          }
+        }*/
+      }
+      else {
+        alert('Ocurrió un error. Inténtalo nuevamente.');
+      }
+    });
+  })
 
   $scope.userSelected =  function(fila, col){
-    console.log(fila+col);
     return $scope.puntos_usuario.indexOf(fila+col) > -1;
   }
 
   $scope.selectPosition = function(fila, col){
-    //si la coordenada no estaba seleccionada
+    if($scope.puntos_seleccionados.indexOf(fila+col) == -1){
+      //si toca barco
+      if($scope.puntos_rival[fila+col] != undefined){
+        $scope.tocados.push[fila+col] = $scope.puntos_rival[fila+col];
+      }
+      
+      $scope.puntos_seleccionados.push(fila+col);
+    }
+
+
+
+
+
     if($scope.puntos_usuario.indexOf(fila+col) == -1)
     {
 

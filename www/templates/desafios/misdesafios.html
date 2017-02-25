@@ -1,0 +1,12 @@
+<ion-view view-title="Mis Desafíos">
+  <ion-content class="padding">
+  	<div class="list" ng-repeat="desafio in listaDeDesafios">
+  		<div class="item item-avatar" ng-class="[{bgabierto: desafio.estado == 'abierto'}, {bgtetoca: desafio.turno == 'ahora'}, {bgespera: desafio.turno == 'espera'}]" ng-click="verDesafio(desafio)">
+  			<img src="img/user.png">
+  			<div><h2>{{desafio.nombre}}</h2>
+  			<p>{{desafio.usuario}}</p>
+  			<div class="monto">{{desafio.monto}}</div></div>
+  		</div>
+	</div>
+  </ion-content>
+</ion-view>

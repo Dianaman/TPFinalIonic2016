@@ -83,6 +83,10 @@ button.rta{
 	text-align: center;
 }
 
+.rival {
+	background-color: pink;
+}
+
 .ts-li-selected {
 	background-color: red;
 	color:black;
@@ -131,6 +135,18 @@ h2 {
 
 .bgapuesta {
 	background-color: #F3F628;
+}
+
+.bgabierto{
+	background-color: #979797;
+}
+
+.bgtetoca {
+	background-color: #11FF5D;
+}
+
+.bgespera {
+	background-color: #5A95B2;
 }
 
 .monto {

@@ -1,5 +1,5 @@
 <ion-view view-title="desafios-batalla">
-	<ion-content>
+	<ion-content class="padding">
     <!--<div class="board">
     	<div class="displays">
 	    	<div class="top">
@@ -24,6 +24,15 @@
     	<input type="number" ng-model="datos.monto" disabled/>
     	
     	<input type="number" ng-model="datos.monto_punto" min="10" max="{{datos.monto}}" step="10"/>
+
+
+		<table class="table-position rival">
+			<tr ng-repeat="i in ['a','b','c']">
+		    	<td ng-repeat="j in [1,2,3]"
+		        ng-class="[{'ts-li-selected' : otherSelected(i,j)}]">{{ i+j }}</td>
+			</tr>
+		</table>
+
 
 		<table class="table-position">
 			<tr ng-repeat="i in ['a','b','c']">
