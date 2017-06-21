@@ -296,32 +296,36 @@ console.log(respuesta);
   $scope.listaDeDesafios = [];
 
   $timeout(function(){
-    var refBatallas = SrvFirebase.RefBatallas();
-    refBatallas.orderByChild("estado").equalTo("abierto").on("child_added", function(snapshot){
-      var desafio = snapshot.val();
-      console.log(snapshot.getKey());
-      desafio.id_desafio = snapshot.getKey();
-      desafio.tipo = 'batalla';
+    $scope.$apply(function(){
+      var refBatallas = SrvFirebase.RefBatallas();
+      refBatallas.orderByChild("estado").equalTo("abierto").on("child_added", function(snapshot){
+        var desafio = snapshot.val();
+        console.log(snapshot.getKey());
+        desafio.id_desafio = snapshot.getKey();
+        desafio.tipo = 'batalla';
 
-      if(desafio.usuario != UsuarioDesafio.getEmail()){
-        $scope.listaDeDesafios.push(desafio);
-      }
+        if(desafio.usuario != UsuarioDesafio.getEmail()){
+          $scope.listaDeDesafios.push(desafio);
+          $scope.$apply();
+        }
 
+      });
+
+      var refApuestas = SrvFirebase.RefApuestas();
+      refApuestas.orderByChild("estado").equalTo("abierto").on("child_added", function(snapshot){
+        var desafio = snapshot.val();
+        console.log(snapshot.getKey());
+        desafio.id_desafio = snapshot.getKey();
+        desafio.tipo = 'apuesta';
+
+        if(desafio.usuario != UsuarioDesafio.getEmail()){
+          $scope.listaDeDesafios.push(desafio);
+          $scope.$apply();
+        }
+
+      });  
     });
-
-    var refApuestas = SrvFirebase.RefApuestas();
-    refApuestas.orderByChild("estado").equalTo("abierto").on("child_added", function(snapshot){
-      var desafio = snapshot.val();
-      console.log(snapshot.getKey());
-      desafio.id_desafio = snapshot.getKey();
-      desafio.tipo = 'apuesta';
-
-      if(desafio.usuario != UsuarioDesafio.getEmail()){
-        $scope.listaDeDesafios.push(desafio);
-      }
-
-    });  
-  }, 10000);  
+  });  
 
 
 
@@ -748,9 +752,10 @@ console.log(respuesta);
 })
 
 .controller('MisDesafiosCtrl', function($scope, $state, $timeout, SrvFirebase, UsuarioDesafio) {
-    $scope.listaDeDesafios = [];
+  $scope.listaDeDesafios = [];
 
   $timeout(function(){
+
     var refBatallas = SrvFirebase.RefBatallas();
     refBatallas.orderByChild("usuario").equalTo(UsuarioDesafio.getEmail()).on("child_added", function(snapshot){
       var desafio = snapshot.val();
@@ -770,6 +775,7 @@ console.log(respuesta);
         }
 
         $scope.listaDeDesafios.push(desafio);
+        $scope.$apply();
       }
     });
 
@@ -791,6 +797,7 @@ console.log(respuesta);
         }
 
         $scope.listaDeDesafios.push(desafio);
+        $scope.$apply();
       }
     });
 
@@ -804,6 +811,7 @@ console.log(respuesta);
 
       if(desafio.estado == 'jugando' || desafio.estado == 'abierto'){
         $scope.listaDeDesafios.push(desafio);
+        $scope.$apply();
       }
     });
 
@@ -817,6 +825,7 @@ console.log(respuesta);
 
       if(desafio.estado == 'jugando' || desafio.estado == 'abierto'){
         $scope.listaDeDesafios.push(desafio);
+        $scope.$apply();
       }
     });    
   });  
