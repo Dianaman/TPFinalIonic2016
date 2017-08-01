@@ -7,7 +7,7 @@ juego online, Generador de desafíos / batalla naval
     - [x] Implementación funcionando
     - [ ] Lógica armada
 - [ ] Disconnect manage / local storage
-    - [ ] Implementado
+    - [x] Implementado
     - [ ] Funcionando
 - [ ] Splash icon
 - [ ] Vibración
@@ -18,7 +18,7 @@ juego online, Generador de desafíos / batalla naval
 - [ ] Login
     - [x] Login básico
     - [x] Registro básico
-    - [ ] OAuth
+    - [x] OAuth token
 - [ ] Jugabilidad
     - [ ] Desafíos
     - [ ] Batallas

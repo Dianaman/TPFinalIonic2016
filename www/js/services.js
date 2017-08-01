@@ -69,7 +69,7 @@ angular.module('starter.services', [])
   }
 
   function RefBatallasPorId(id){
-    return ObtenerRef('batallas/'+id+'/');
+    return ObtenerRef('batallas/'+id);
   }
 
   function RefApuestas(){

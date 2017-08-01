@@ -29,6 +29,10 @@
           <button class="button button-block button-balanced" ng-click="GoRegistrar()" ng-disabled="!habilitado">Registrarse</button>
         </label>
 
+        <label class="item">
+          <button class="button button-block button-dark" ng-click="GithubLogin()">GitHub</button>
+        </label>
+
         <a ng-click="OlvidePassword()" style="cursor:pointer;padding:10px 6px;display:block;text-align:right" ng-hide="!habilitado">Olvide mi Password</a>
         <!-- Se utiliza ng-hide dado que ng-disabled no funciona en etiquetas a. La funcion de este ng-hide es impedir enviar mail de reestablecimiento de contraseña cuando el logueo este en proceso. -->
       </div>

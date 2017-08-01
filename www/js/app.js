@@ -5,7 +5,7 @@
 // the 2nd parameter is an array of 'requires'
 // 'starter.services' is found in services.js
 // 'starter.controllers' is found in controllers.js
-angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', 'starter.directives', 'starter.factories'])
+angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', 'starter.directives', 'starter.factories', 'ngCordovaOauth'])
 
 .run(function($ionicPlatform,$rootScope,UsuarioDesafio) {
   $ionicPlatform.ready(function() {
@@ -140,17 +140,14 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', '
     }
   })
 
-  .state('desafios.batalla', {
-    url: '/desafios-batalla/:batalla',
-    views: {
-      'desafios-batalla': {
-        templateUrl: 'templates/desafios/batallanaval.html',
-        controller: 'BatallaCtrl'
-      }
-    }
-  });
-
+  .state('juego', {
+    url: '/juego/:tipo/:id',
+    templateUrl: 'templates/desafios/batallanaval.html',
+    controller: 'DesafiosJuegoCtrl'
+  
+  })
+;
   // if none of the above states are matched, use this as the fallback
-  $urlRouterProvider.otherwise('/tab/dash');
+  $urlRouterProvider.otherwise('/tab-dash');
 
 });

@@ -15,7 +15,7 @@ angular.module('starter.controllers', ['ngCordova'])
   }
 })
 
-.controller('LoginCtrl', function($scope, $timeout, SrvFirebase, UsuarioDesafio, $state, $q) {
+.controller('LoginCtrl', function($scope, $timeout, SrvFirebase, UsuarioDesafio, $state, $q, $cordovaOauth ) {
 
 
   $scope.loginData = {};
@@ -81,8 +81,28 @@ angular.module('starter.controllers', ['ngCordova'])
 
       }, 0)
       
-    })
+    });
+
   };
+
+  $scope.GithubLogin = function(){
+    try {
+      alert(window.location.href); 
+
+      $cordovaOauth.github('1da1f3fb9ac7fa61ac6e', '9f35fa521fec2c656fd07853641062747ffc34d6', [])
+        .then(function(result) {
+          if(result.access_token){
+            $scope.respuestaToken = result.access_token;
+            $scope.closeLogin();
+          }
+      }, function(error) {
+          console.error(error);
+      });
+    } catch(error){
+      console.error(error);
+    };
+  };
+
 
   $scope.OlvidePassword = function(){
     console.log("olvideeee");
@@ -147,7 +167,6 @@ angular.module('starter.controllers', ['ngCordova'])
         $scope.respuestaToken = respuesta;
         console.log(respuesta);
         console.log(window.cordova);
-console.log(respuesta);
 
         if (window.cordova) {
           /*if ($scope.respuestaToken.email == "komoshi@gmail.com") {
@@ -201,7 +220,7 @@ console.log(respuesta);
 
               UsuarioDesafio.login(nuevoUsuario.email, snapshot.getKey(), nuevoUsuario.creditos, nuevoUsuario.soyAdmin); 
 
-        $scope.closeLogin();
+              $scope.closeLogin();
               });
             }
           });
@@ -296,7 +315,6 @@ console.log(respuesta);
   $scope.listaDeDesafios = [];
 
   $timeout(function(){
-    $scope.$apply(function(){
       var refBatallas = SrvFirebase.RefBatallas();
       refBatallas.orderByChild("estado").equalTo("abierto").on("child_added", function(snapshot){
         var desafio = snapshot.val();
@@ -324,7 +342,6 @@ console.log(respuesta);
         }
 
       });  
-    });
   });  
 
 
@@ -521,6 +538,125 @@ console.log(respuesta);
   }
 
 
+})
+
+.controller('DesafiosJuegoCtrl', function($scope, $stateParams,$timeout,SrvFirebase, UsuarioDesafio){
+  var tipo = $stateParams.tipo;
+  var id_desafio = $stateParams.id;
+  var jugador;
+  
+  $scope.jugada;
+
+  $scope.tableroRival = [];
+  $scope.tablero = [];
+
+
+  $scope.batalla_cols = [];
+  $scope.batalla_rows = [];
+
+  switch(tipo){
+    case 'batalla':
+
+
+
+      $timeout(function(){
+          var refBatallas = SrvFirebase.RefBatallasPorId(id_desafio);
+          refBatallas.once("value").then(function(snapshot){
+            $scope.desafio = snapshot.val();
+            console.log($scope.desafio);
+
+            if(UsuarioDesafio.getEmail() == $scope.desafio.usuario){
+              $scope.tablero = $scope.desafio.puntos_usuario;
+              $scope.tableroRival = $scope.desafio.puntos_rival;
+              jugador = 'creador';
+            } else {
+              $scope.tablero = $scope.desafio.puntos_rival;
+              $scope.tableroRival = $scope.desafio.puntos_usuario;
+              jugador = 'retador';
+            }
+
+            console.log($scope.tableroRival);
+            console.log($scope.tablero);
+
+            if($scope.desafio.dificultad == 'facil'){ 
+              $scope.batalla_cols = ['a', 'b', 'c'];
+              $scope.batalla_rows = [1,2,3];
+            }
+            else if($scope.desafio.dificultad == 'medio') { 
+              $scope.batalla_cols = ['a', 'b', 'c', 'd', 'e'];
+              $scope.batalla_rows = [1,2,3,4,5]; 
+            }
+            else { 
+              $scope.batalla_cols = ['a', 'b', 'c', 'd', 'e', 'f', 'g'];
+              $scope.batalla_rows = [1,2,3,4,5,6,7]; 
+            }
+
+            $scope.$apply();
+          });
+
+      });  
+
+      break;
+    case 'apuesta':
+
+      $timeout(function(){
+        $scope.$apply(function(){
+          var refApuestas = SrvFirebase.RefApuestasPorId(id_desafio);
+          refApuestas.on("child_added", function(snapshot){
+            var desafio = snapshot.val();
+            console.log(snapshot.getKey());
+            desafio.id_desafio = snapshot.getKey();
+
+            if(desafio.usuario != UsuarioDesafio.getEmail()){
+              $scope.listaDeDesafios.push(desafio);
+            }
+
+          });  
+        });
+      });
+      break;
+  }
+
+  $scope.selectPosition = function(row, col){
+    if(jugador === 'creador'){
+      if(!$scope.desafio.turnos_usuario || $scope.desafio.turnos_usuario.indexOf(row+col) !== -1){
+        $scope.jugada = row+col;
+      }
+    } else {
+      if(!$scope.desafio.turnos_usuario || $scope.desafio.turnos_usuario.indexOf(row+col) !== -1){
+        $scope.jugada = row+col;
+      }
+    }
+    console.log($scope.jugada);
+  }
+
+  $scope.EnviarAtaque = function(){
+    if(jugador === 'creador'){
+      if(!$scope.desafio.turnos_usuario){
+        $scope.desafio.turnos_usuario = [];
+      }
+      $scope.desafio.turnos_usuario.push($scope.jugada);
+    }
+    else {
+      if(!$scope.desafio.turnos_rival){
+        $scope.desafio.turnos_rival = [];
+      }
+      $scope.desafio.turnos_rival.push($scope.jugada);  
+    }
+    console.log($scope.desafio);
+  }
+
+  $scope.userSelected = function(col, row){
+    if($scope.jugada === col+row){ return true; }
+    if($scope.desafio.turnos_usuario){
+      for(var turno of $scope.desafio.turnos_usuario){
+        if(turno === col+row){
+          return true;
+        }
+      }
+    }
+    return false;
+  }
 })
 
 .controller('DesafioNuevoCtrl', function($scope, $state, $timeout, SrvFirebase, UsuarioDesafio) {
@@ -837,8 +973,12 @@ console.log(respuesta);
     console.log(des);
 
     if(desa.tipo == 'batalla'){
-
-      $state.go('desafios.batalla', {batalla: des});
+      if(desa.estado == 'jugando'){
+        $state.go('juego', {tipo: 'batalla', id: des});
+      }
+      else {
+        $state.go('desafios.batalla', {batalla: des});
+      }
     }
     else {
       $state.go('desafios.apuesta', des);
@@ -868,7 +1008,7 @@ console.log(respuesta);
     SrvFirebase.RefBatallas().orderByChild("id").equalTo(id).limitToFirst(1).on("value", function(snapshot){
       if(snapshot){
         $scope.batalla = snapshot.val();
-
+console.log(snapshot);
 
         
         /*if($scope.batalla){
@@ -877,6 +1017,7 @@ console.log(respuesta);
             console.log(name + "=" + $scope.batalla.puntos_rival[name]);
           }
         }*/
+        $scope.$apply();
       }
       else {
         alert('Ocurrió un error. Inténtalo nuevamente.');

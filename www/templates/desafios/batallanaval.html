@@ -1,46 +1,27 @@
-<ion-view view-title="desafios-batalla">
+<ion-view view-title="Batalla naval">
+
 	<ion-content class="padding">
-    <!--<div class="board">
-    	<div class="displays">
-	    	<div class="top">
-	      		<ul class="grid"></ul>
-	    	</div>
-	    	<div class="bottom">
-	      		<ul class="grid"></ul>
-	    	</div>
-  		</div>
-    </div>-->
 
-    	<!--<div class="batalla-mapa">
-
-    		<div class="batalla-punto" id="punto-a1" ng-click="selectPoint($event)"></div>
-    		<div class="batalla-punto" id="punto-a2" ng-click="selectPoint($event)"></div>
-    		<br>
-
-    		<div class="batalla-punto" id="punto-b1" ng-click="selectPoint($event)"></div>
-    		<div class="batalla-punto" id="punto-b2" ng-click="selectPoint($event)"></div>
-    		<br>
-    	</div>-->
-    	<input type="number" ng-model="datos.monto" disabled/>
-    	
-    	<input type="number" ng-model="datos.monto_punto" min="10" max="{{datos.monto}}" step="10"/>
-
-
+		<h1>Rival</h1>
 		<table class="table-position rival">
-			<tr ng-repeat="i in ['a','b','c']">
-		    	<td ng-repeat="j in [1,2,3]"
+			<tr ng-repeat="i in batalla_cols">
+		    	<td ng-repeat="j in batalla_rows"
 		        ng-class="[{'ts-li-selected' : otherSelected(i,j)}]">{{ i+j }}</td>
 			</tr>
 		</table>
 
-
+		<h1>Tu juego</h1>
 		<table class="table-position">
-			<tr ng-repeat="i in ['a','b','c']">
-		    	<td ng-repeat="j in [1,2,3]" ng-click="selectPosition(i, j)"
+			<tr ng-repeat="i in batalla_cols">
+		    	<td ng-repeat="j in batalla_rows" ng-click="selectPosition(i, j)"
 		        ng-class="[{'ts-li-selected' : userSelected(i,j)}]">{{ i+j }}</td>
 			</tr>
 		</table>
+		<!--
+		Jugabilidad:
+		-
+		-->
 
-		<button class="button button-block button-balanced" ng-click="EnviarPosiciones()" ng-disabled="btnEnviarDisabled">Enviar coordenadas</button>
+		<button class="button button-block button-balanced" ng-click="EnviarAtaque()" ng-disabled="!jugada">Enviar coordenadas</button>
 	</ion-content>
 </ion-view>

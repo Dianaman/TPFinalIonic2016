@@ -71,7 +71,7 @@ button.rta{
 }
 
 .table-position {
-	margin:10% auto;
+	margin:50px auto;
 }
 
 .table-position td{
@@ -81,15 +81,18 @@ button.rta{
 	border: 1px solid black;
 	background-color: silver;
 	text-align: center;
+	cursor: pointer;
 }
 
-.rival {
-	background-color: pink;
+.rival td{
+	background-color: pink !important;
+	cursor: not-allowed;
 }
 
 .ts-li-selected {
 	background-color: red;
 	color:black;
+	cursor: not-allowed !important;
 }
 
 .table-center{
