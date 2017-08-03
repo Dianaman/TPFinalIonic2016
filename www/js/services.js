@@ -2,20 +2,20 @@ angular.module('starter.services', [])
 
 .factory('UsuarioDesafio',[function(){
   var email = "";
-  var fbKey = "";
+  var key = "";
   var creditos = 0;
   var soyAdmin = false;
 
   return {
-    login:function(mail,key, credits, admin){
+    login:function(mail,fbkey, credits, admin){
       email = mail;
-      fbKey = key;
+      key = fbkey;
       creditos = credits;
       soyAdmin = admin;
     },getEmail:function(){
       return email;
     },getKey:function(){
-      return fbKey;
+      return key;
     },getCred:function(){
       return creditos;
     },isAdmin:function(){
@@ -23,8 +23,8 @@ angular.module('starter.services', [])
     },getFullData:function(){
       var jsonUsuario = {};
       jsonUsuario.email = email;
-      jsonUsuario.fbKey = key;
-      jsonUsuario.creditos = credits;
+      jsonUsuario.key = key;
+      jsonUsuario.creditos = creditos;
       jsonUsuario.soyAdmin = soyAdmin;
       return JSON.stringify(jsonUsuario);
     }

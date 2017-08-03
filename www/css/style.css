@@ -85,7 +85,6 @@ button.rta{
 }
 
 .rival td{
-	background-color: pink !important;
 	cursor: not-allowed;
 }
 
@@ -93,6 +92,15 @@ button.rta{
 	background-color: red;
 	color:black;
 	cursor: not-allowed !important;
+}
+.barco {
+	background-color:red !important;
+}
+.agua {
+	background-color: lightblue !important;
+}
+.panel-disabled{
+	cursor:not-allowed !important;
 }
 
 .table-center{
