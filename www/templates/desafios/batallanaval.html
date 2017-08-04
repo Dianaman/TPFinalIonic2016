@@ -7,7 +7,6 @@
 			<p>{{desafio.usuario}}: {{estado.creador}}</p>
 			<p>{{desafio.rival}}: {{estado.retador}}</p>
 			</div>
-			{{es_turno_activo}}
 
 			<h1>Rival</h1>
 			<table class="table-position rival">
@@ -34,12 +33,11 @@
 			        </td>
 				</tr>
 			</table>
-			<!--
-			Jugabilidad:
-			-
-			-->
 
-			<button class="button button-block button-balanced" ng-click="EnviarAtaque()" ng-disabled="!jugada" ng-hide="!es_turno_activo">Enviar coordenadas</button>
+			<button class="button button-block button-balanced" ng-click="EnviarAtaque()" 
+				ng-disabled="!jugada || desafio.estado != 'jugando'" ng-hide="!es_turno_activo">
+				Enviar coordenadas
+			</button>
 		</div>
 		<div ng-show="!desafio">
 			<ion-spinner></ion-spinner>

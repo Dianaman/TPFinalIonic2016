@@ -52,10 +52,6 @@ angular.module('starter.services', [])
     return ObtenerRef('usuarios/');
   }
   
-  function RefUsuarios(){
-    return ObtenerRef('usuarios/');
-  }
-
   function RefDesafios(){
     return ObtenerRef('desafios/');
   }
@@ -84,25 +80,25 @@ angular.module('starter.services', [])
     return ObtenerRef('puntuaciones/');
   }
 
-  function EnviarNotificacion(){
+  function EnviarNotificacion(titulo, mensaje, usuario){
     var http = new XMLHttpRequest();
     var url =  'https://fcm.googleapis.com/fcm/send';
     
     var params = JSON.stringify({
-            "to":"/topics/all", //Topic or single device
+        "to":"/topics/all", //Topic or single device
         "notification":{
-            "title":"Desafios",  //Any value
-            "body":"Una nuevo desafío fue ingresado.",  //Any value
+            "title":titulo,  //Any value
+            "body":mensaje,  //Any value
             "sound":"default", //If you want notification sound
             "click_action":"FCM_PLUGIN_ACTIVITY",  //Must be present for Android
             "icon":"fcm_push_icon"  //White icon Android resource
-          },
-            "priority":"high" //If not set, notification won't be delivered on completely closed iOS app
+        },
+        "priority":"high" //If not set, notification won't be delivered on completely closed iOS app
       });
 
-    http.open("POST", url, true);
+      http.open("POST", url, true);
       http.setRequestHeader("Content-type", "application/json");
-      http.setRequestHeader('Authorization', 'key=AIzaSyCchqZQC6XekhnEpExiLL461cSxltAuTLI');
+      http.setRequestHeader('Authorization', 'key=AIzaSyDO9dc0jlIOmA7Fg1NXL3YnaEB4F9CVoTE');
 
       http.onreadystatechange = function() {
           if(http.readyState == 4 && http.status == 200) {

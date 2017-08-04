@@ -41,4 +41,18 @@ angular.module('starter.factories', [])
         }       
     }
   }
+})
+
+.factory('MensajesDesafio', function(){
+  return {
+    victoria: function(juego, rival){
+      return '¡Enhorabuena! Le has ganado a '+rival+' en '+juego+'.';
+    },
+    derrota: function(juego, rival){
+      return 'Has sido derrotado por '+rival+' en '+juego+'. Más suerte la próxima vez.';
+    },
+    empate: function(juego, rival){
+      return 'Has empatado con '+rival+' en '+juego+'. Pudo ser peor...';
+    }
+  }
 });
