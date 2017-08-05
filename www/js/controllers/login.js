@@ -1,21 +1,101 @@
 angular.module('starter.controller.login', ['ngCordova'])
 
-.controller('BaseCtrl', function($rootScope, $scope, $ionicModal){
+.controller('BaseCtrl', function($rootScope, $scope, $ionicModal, SrvFirebase, DeviceTools, $q, UsuarioDesafio){
 
   if($rootScope.usuarioActual == undefined || $rootScope.usuarioActual.getEmail() == '' || $rootScope.usuarioActual.getEmail() == undefined){
     $ionicModal.fromTemplateUrl('templates/login.html', {
       scope: $scope,
       animation: 'slide-in-up',
       focusFirstInput: true,
-      backdropClickToClose: false
+      backdropClickToClose: false,
+      hardwareBackButtonClose: false
     }).then(function(modal) {
       $scope.modal = modal;
       $scope.modal.show();
     });
   }
+
+  $scope.usuario = {};
+
+  Date.prototype.addDays = function(days) {
+    var dat = new Date(this.valueOf());
+    dat.setDate(dat.getDate() + days);
+    return dat;
+  }
+
+  var hoy = new Date();
+  var toleranciaVencimiento = hoy.addDays(-3);
+  var vencimiento = toleranciaVencimiento.valueOf();
+
+  $rootScope.$on('userLogged', function(){
+    $scope.usuario.email = UsuarioDesafio.getEmail();
+    $scope.usuario.creditos = UsuarioDesafio.getCred();
+
+    console.log(vencimiento);
+
+    $q(function(resolve, reject){
+      var actualizarCreditos = [];
+
+      SrvFirebase.RefUsuarios().once('value', function(usuarios){
+        usuarios.forEach(function(child){
+          actualizarCreditos.push({id:child.getKey(), user:child.val()});
+        });
+      })
+
+      SrvFirebase.RefDesafios().once('value', function(snapshot){
+        var desafiosExpirados = [];
+        var apuestasConcluidas = [];
+        snapshot.forEach(function(child){
+          var data = child.val();
+          console.log(data);
+          if(data.estado == 'abierto' && data.fecha_creacion < vencimiento){
+            data.estado = 'expirado';
+            for(var usuario of actualizarCreditos){
+              if(usuario.email == data.email){
+                usuario.creditos += data.monto;
+              }
+            }
+            desafiosExpirados.push(data);
+          } 
+          else if (data.estado == 'jugando' && data.tipo == 'apuesta' && data.fecha_resultado <= hoy) {
+            data.estado = 'pendiente';
+            apuestasConcluidas.push(data);
+            desafiosExpirados.push(data);
+          }
+        });
+
+        if(desafiosExpirados.length > 0){
+          for(var user of actualizarCreditos){
+            SrvFirebase.RefUsuarioPorId(user.id).update(user.user, function(error){
+              if(error == null){
+                console.info('Desafíos cerrados', desafiosExpirados);
+              } else {
+                console.error(error);
+              }
+            });
+          }
+
+          SrvFirebase.RefDesafios().update(desafiosExpirados, function(error){
+            if(error == null){
+              console.info('Desafíos cerrados', desafiosExpirados);
+            } else {
+              console.error(error);
+            }
+          });
+        }
+
+        for(var apuesta of apuestasConcluidas){
+          SrvFirebase.EnviarNotificacion('RESULTADO PENDIENTE', 'Su apuesta ha expirado, el oponente aguarda el resultado', apuesta.usuario);
+        }
+      });
+    });
+  })
+
+
+
 })
 
-.controller('LoginCtrl', function($scope, $timeout, SrvFirebase, UsuarioDesafio, $state, $q, $cordovaOauth ) {
+.controller('LoginCtrl', function($scope, $timeout, SrvFirebase, UsuarioDesafio, $state, $q, $cordovaOauth , $http, DeviceTools, $rootScope) {
 
 
   $scope.loginData = {};
@@ -94,6 +174,18 @@ angular.module('starter.controller.login', ['ngCordova'])
           if(result.access_token){
             $scope.respuestaToken = result.access_token;
             $scope.closeLogin();
+
+            $http.defaults.headers.common.Authorization = "Bearer " + $scope.respuestaToken;
+            $http.get('https://api.github.com/user')
+            .success(function(data){
+              console.info(data);
+              DeviceTools.showToast(data);
+
+              $scope.loginData.username = data.email;
+              TraerUsuario();
+            }).error(function(error){
+              DeviceTools.showToast(error);
+            })
           }
       }, function(error) {
           console.error(error);
@@ -186,6 +278,7 @@ angular.module('starter.controller.login', ['ngCordova'])
           var usuarioExistente = child.val();
           UsuarioDesafio.login(usuarioExistente.email, child.key, usuarioExistente.creditos, usuarioExistente.soyAdmin); 
           console.log(UsuarioDesafio.getFullData());
+          $rootScope.$emit('userLogged');
         })
 
         $scope.closeLogin();
@@ -205,6 +298,7 @@ angular.module('starter.controller.login', ['ngCordova'])
              console.info('nuevo usuario', nuevoUsuario);
 
             UsuarioDesafio.login(nuevoUsuario.email, snapshot.getKey(), nuevoUsuario.creditos, nuevoUsuario.soyAdmin); 
+            $rootScope.$emit('userLogged');
 
             $scope.closeLogin();
             });

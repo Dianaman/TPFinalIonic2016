@@ -34,12 +34,9 @@ angular.module('starter.services', [])
 .service('SrvFirebase', ['$http',function($http){
 
   this.RefUsuarios = RefUsuarios;
+  this.RefUsuarioPorId = RefUsuarioPorId;
   this.RefDesafios = RefDesafios;
   this.RefDesafioPorId = RefDesafioPorId;
-  this.RefBatallas = RefBatallas;
-  this.RefBatallasPorId = RefBatallasPorId;
-  this.RefApuestas = RefApuestas;
-  this.RefApuestasPorId = RefApuestasPorId;
   this.RefPuntuaciones = RefPuntuaciones;
   this.EnviarNotificacion = EnviarNotificacion;
 
@@ -52,28 +49,16 @@ angular.module('starter.services', [])
     return ObtenerRef('usuarios/');
   }
   
+  function RefUsuarioPorId(id){
+    return ObtenerRef('usuarios/'+id);
+  }
+
   function RefDesafios(){
     return ObtenerRef('desafios/');
   }
 
   function RefDesafioPorId(id){
     return ObtenerRef('desafios/'+id);
-  }
-
-  function RefBatallas(){
-    return ObtenerRef('batallas/');
-  }
-
-  function RefBatallasPorId(id){
-    return ObtenerRef('batallas/'+id);
-  }
-
-  function RefApuestas(){
-    return ObtenerRef('apuestas/');
-  }
-
-  function RefApuestasPorId(id){
-    return ObtenerRef('apuestas/'+id+'/');
   }
 
   function RefPuntuaciones(){

@@ -8,7 +8,7 @@
 angular.module('starter', ['ionic', 'starter.controllers','starter.controller.login', 'starter.controller.desafios', 'starter.controller.juegos',
             'starter.services', 'starter.directives', 'starter.factories', 'ngCordovaOauth'])
 
-.run(function($ionicPlatform,$rootScope,UsuarioDesafio) {
+.run(function($ionicPlatform,$rootScope,UsuarioDesafio, DeviceTools,ConnectivityMonitor) {
   $ionicPlatform.ready(function() {
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
     // for form inputs)
@@ -24,6 +24,8 @@ angular.module('starter', ['ionic', 'starter.controllers','starter.controller.lo
 
     $rootScope.usuarioActual = UsuarioDesafio;
 
+    DeviceTools.initialize();
+    ConnectivityMonitor.startWatching();
   });
 })
 
@@ -67,6 +69,7 @@ angular.module('starter', ['ionic', 'starter.controllers','starter.controller.lo
 
   .state('tab.tienda', {
     url: '/tienda',
+    cache:false,
     views: {
       'tab-tienda': {
         templateUrl: 'templates/tab-tienda.html',
@@ -94,7 +97,7 @@ angular.module('starter', ['ionic', 'starter.controllers','starter.controller.lo
   })
 
   .state('desafios.todos', {
-    url: '/desafios-todos',
+    url: '/todos',
     views: {
       'desafios-todos': {
         templateUrl: 'templates/desafios/todos.html',
@@ -121,7 +124,7 @@ angular.module('starter', ['ionic', 'starter.controllers','starter.controller.lo
   })
 
   .state('desafios.nuevo', {
-    url: '/desafios-nuevo',
+    url: '/nuevo/:tipo',
     views: {
       'desafios-nuevo': {
         templateUrl: 'templates/desafios/nuevo.html',
@@ -131,7 +134,7 @@ angular.module('starter', ['ionic', 'starter.controllers','starter.controller.lo
   })
 
   .state('desafios.misdesafios', {
-    url: '/desafios-misdesafios',
+    url: '/misdesafios',
     cache:false,
     views: {
       'desafios-misdesafios': {
@@ -158,6 +161,30 @@ angular.module('starter', ['ionic', 'starter.controllers','starter.controller.lo
       }
     }
   })
+
+  .state('tab.item', {
+    url: '/item/:item',
+    cache: false,
+    views:{
+      'tab-item':{
+        templateUrl: 'templates/desafios/item.html',
+        controller: 'DesafioItemCtrl'
+      }
+    }
+  })
+
+  .state('tab.opciones', {
+    url: '/opciones',
+    cache: false,
+    views:{
+      'tab-opciones':{
+        templateUrl: 'templates/desafios/tipo.html',
+        controller: 'DesafioTiposCtrl'
+      }
+    }
+  })
+
+
 ;
   // if none of the above states are matched, use this as the fallback
   $urlRouterProvider.otherwise('/tab/dash');

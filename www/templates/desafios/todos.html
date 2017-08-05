@@ -2,7 +2,8 @@
   <ion-content class="padding">
   	<div class="list" ng-repeat="desafio in listaDeDesafios">
   		<div class="item item-avatar" ng-class="[{bgbatalla: desafio.tipo == 'batalla'}, {bgapuesta: desafio.tipo == 'apuesta'}]" ng-click="verDesafio(desafio)">
-  			<img src="img/user.png">
+        <img src="img/swords.png" ng-if="desafio.tipo == 'batalla'">
+        <img src="img/treasure.png" ng-if="desafio.tipo == 'apuesta'">
   			<div><h2>{{desafio.nombre}}</h2>
   			<p>{{desafio.usuario}}</p>
   			<div class="monto">{{desafio.monto}}</div></div>

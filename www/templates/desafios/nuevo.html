@@ -12,29 +12,6 @@
 		  	<input type="number" ng-model="opciones.monto" min="10" max="1000" step="10" ng-change="actualizarMonto()" required>
 	  	</label>
 
-	  	<div class="item">
-
-	  		<span class="input-label" style="display:inline-block;float:left">Tipo de juego</span>
-	  		<div style="width:25%;display:inline-block;">Batalla <input type="radio" ng-model="opciones.tipo" ng-value="'batalla'" ng-change="actualizarTipo()"></div>
-	  		<div style="width:25%;display:inline-block;">Apuesta <input type="radio" ng-model="opciones.tipo" ng-value="'apuesta'" ng-change="actualizarTipo()"></div>
-	  	</div>
-
-	  	<!--Creación de juego tipo apuesta -->
-	  	<div ng-show="opciones.tipo=='apuesta'">
-	  		<label class="item item-input">
-			  	<span class="input-label">Descripción de la apuesta</span>
-	  			<input type="text" name="opciones.descripcion">
-	  		</label>
-	  		<label class="item item-input">
-		  		<span class="input-label">Fecha del resultado</span>
-		  		<div class="item" ion-datetime-picker ng-model="opciones.fechadecierre" only-valid="{'after': auxiliar.fechaactual, 'inclusive': false}" ng-show="opciones.esmobile" ng-click="ElegirFecha()">
-			        {{opciones.fechadecierre| date: "yyyy-MM-dd H:mm"}}
-			    </div>
-
-				<input type="datetime-local" ng-model="denuncia.fechadecierre" ng-show="!opciones.esmobile">
-		    </label>
-	  	</div>
-
 	  	<!-- Creación de juego tipo batalla naval -->
 	  	<div ng-show="opciones.tipo=='batalla'">
 	  		<label class="item item-input">
@@ -61,13 +38,29 @@
 			<button class="button button-block button-balanced" ng-click="crearDesafio()" ng-disabled="btnEnviarDisabled">Desafiar</button>
 	  	</div>
 
+	  	<!--Creación de juego tipo apuesta -->
 	  	<div ng-if="opciones.tipo == 'apuesta'">
+
+	  		<label class="item item-input">
+			  	<span class="input-label">Descripción de la apuesta</span>
+	  			<input type="text" name="desafio.descripcion" ng-model="desafio.descripcion">
+	  		</label>
+
+	  		<label class="item item-input">
+		  		<span class="input-label">Fecha del resultado</span>
+		  		<div class="item" ion-datetime-picker ng-model="desafio.fecha_resultado" only-valid="{'after': auxiliar.fechaactual, 'inclusive': false}" ng-show="opciones.esmobile" ng-click="ElegirFecha()">
+			        {{desafio.fecha_resultado| date: "yyyy-MM-dd H:mm"}}
+			    </div>
+
+				<input type="datetime-local" ng-model="desafio.fecha_resultado" ng-show="!opciones.esmobile">
+		    </label>
+
 		  	<label class="item item-input">
 			  	<span class="input-label">Tu apuesta:</span>
-			  	<input type="number" ng-model="apuesta.eleccion_usuario">
+			  	<input type="number" ng-model="desafio.eleccion_usuario">
 		  	</label>
 
-	  		<button class="button button-block button-balanced" ng-click="crearDesafio()" ng-disabled="apuesta.eleccion_usuario == '' || apuesta.eleccion_usuario == null">Desafiar</button>	
+	  		<button class="button button-block button-balanced" ng-click="crearDesafio()" ng-disabled="desafio.eleccion_usuario == '' || desafio.eleccion_usuario == null">Desafiar</button>	
 
 	  	</div>
 

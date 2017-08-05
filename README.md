@@ -3,22 +3,22 @@ juego online, Generador de desafíos / batalla naval
 
 ## Progreso
 
-- [ ] PUSH NOTIFICATION
+- [x] PUSH NOTIFICATION
     - [x] Implementación funcionando
-    - [ ] Lógica armada
+    - [x] Lógica armada
 - [ ] Disconnect manage / local storage
     - [x] Implementado
-    - [ ] Funcionando
-- [ ] Splash icon
-- [ ] Vibración
-- [ ] Sonido
-- [ ] Carga de crédito
+    - [x] Funcionando
+- [x] Splash icon
+- [x] Vibración
+- [x] Sonido
+- [x] Carga de crédito
     - [x] Funcionalidad básica
-    - [ ] QR
-- [ ] Login
+    - [x] QR
+- [x] Login
     - [x] Login básico
     - [x] Registro básico
     - [x] OAuth token
 - [ ] Jugabilidad
-    - [ ] Desafíos
-    - [ ] Batallas
+    - [x] Apuestas
+    - [x] Batallas

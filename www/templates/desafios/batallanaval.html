@@ -12,9 +12,12 @@
 			<table class="table-position rival">
 				<tr ng-repeat="i in batalla_cols">
 			    	<td ng-repeat="j in batalla_rows"
-			        ng-class="[{'barco':tiros_rival.indexOf(i+j) !== -1 && puntos_activo[i+j], 
-			        			'agua':tiros_rival.indexOf(i+j) !== -1 && !puntos_activo[i+j]
+			        ng-class="[{'barco':esBarco(i, j, 'activo'), 
+			        			'agua':esAgua(i, j, 'activo')
 			        		  }]">
+			        		  <!--ng-class="[{'barco':tiros_rival.indexOf(i+j) !== -1 && puntos_activo[i+j], 
+			        			'agua':tiros_rival.indexOf(i+j) !== -1 && !puntos_activo[i+j]
+			        		  }]"-->
 			        	{{ tiros_rival.indexOf(i+j) !== -1 && puntos_activo[i+j] ? puntos_activo[i+j] : i+j }}
 			        </td>
 				</tr>
@@ -26,8 +29,8 @@
 			    	<td ng-repeat="j in batalla_rows" ng-click="selectPosition(i, j)"
 			        ng-class="[{'ts-li-selected' : userSelected(i,j), 
 			        			'panel-disabled': !es_turno_activo, 
-			        			'barco':tiros_activo.indexOf(i+j) !== -1 && puntos_rival[i+j], 
-			        			'agua':tiros_activo.indexOf(i+j) !== -1 && !puntos_rival[i+j]
+			        			'barco':esBarco(i, j, 'rival'), 
+			        			'agua':esAgua(i, j, 'rival')
 			        		  }]">
 			        	{{ tiros_activo.indexOf(i+j) !== -1 && puntos_rival[i+j] ? puntos_rival[i+j] : i+j }}
 			        </td>

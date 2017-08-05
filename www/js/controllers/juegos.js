@@ -1,6 +1,6 @@
 angular.module('starter.controller.juegos', ['ngCordova'])
 
-.controller('JuegoBatallaCtrl', function($scope, $state, $stateParams,$timeout,SrvFirebase, UsuarioDesafio, $ionicPopup, MensajesDesafio){
+.controller('JuegoBatallaCtrl', function($scope, $state, $stateParams,$timeout,SrvFirebase, UsuarioDesafio, $ionicPopup, MensajesDesafio, DeviceTools){
   var id_desafio = $stateParams.id;
   var jugador;
   
@@ -31,8 +31,8 @@ angular.module('starter.controller.juegos', ['ngCordova'])
 
 
   $timeout(function(){
-      var refBatallas = SrvFirebase.RefBatallasPorId(id_desafio);
-      refBatallas.once("value").then(function(snapshot){
+      var RefDesafios = SrvFirebase.RefDesafioPorId(id_desafio);
+      RefDesafios.once("value").then(function(snapshot){
         $scope.desafio = snapshot.val();
         console.log($scope.desafio);
 
@@ -54,23 +54,36 @@ angular.module('starter.controller.juegos', ['ngCordova'])
           else {
             $scope.turno = $scope.desafio.turnos_usuario.length + 1;
 
-            //Si comenzó y le toca al creador (usuario activo)
-            if($scope.desafio.turnos_usuario.length == $scope.desafio.turnos_rival.length){
-              $scope.es_turno_activo = true;
-            }
-
-            if($scope.desafio.puntos_usuario[$scope.desafio.turnos_rival[$scope.desafio.turnos_rival.length -1]]){
-              $scope.estado.retador = 'Te dió';
+            //si el retador aun no hizo su primer tiro
+            if(!$scope.desafio.turnos_rival){
+              $scope.estado.retador = 'Esperando jugada';
             } else {
-              $scope.estado.retador = 'Falló';
-            }
+              //Si comenzó y le toca al creador (usuario activo)
+              if($scope.desafio.turnos_usuario.length == $scope.desafio.turnos_rival.length){
+                $scope.es_turno_activo = true;
+              }
 
+              if($scope.desafio.puntos_usuario[$scope.desafio.turnos_rival[$scope.desafio.turnos_rival.length -1]]){
+                $scope.estado.retador = 'Te dió';
+              } else {
+                $scope.estado.retador = 'Falló';
+              }              
+            }
             if($scope.desafio.puntos_rival[$scope.desafio.turnos_usuario[$scope.desafio.turnos_usuario.length -1]]){
               $scope.estado.creador = 'Le diste';
             } else {
               $scope.estado.creador = 'Fallaste';
             }
 
+
+          }
+
+          if($scope.es_turno_activo){
+            if($scope.estado.retador == 'Te dió'){  DeviceTools.sonar('barco'); 
+            } else { DeviceTools.sonar('agua'); }
+          } else {
+            if($scope.estado.creador == 'Le diste'){  DeviceTools.sonar('barco'); 
+            } else { DeviceTools.sonar('agua'); }
           }
 
           $scope.tiros_activo = $scope.desafio.turnos_usuario;
@@ -120,6 +133,14 @@ angular.module('starter.controller.juegos', ['ngCordova'])
 
           }
 
+          if($scope.es_turno_activo){
+            if($scope.estado.creador == 'Te dió'){  DeviceTools.sonar('barco'); 
+            } else { DeviceTools.sonar('agua'); }
+          } else {
+            if($scope.estado.retador == 'Le diste'){  DeviceTools.sonar('barco'); 
+            } else { DeviceTools.sonar('agua'); }
+          }
+
           $scope.tiros_activo = $scope.desafio.turnos_rival;
           $scope.tiros_rival = $scope.desafio.turnos_usuario;
 
@@ -127,17 +148,6 @@ angular.module('starter.controller.juegos', ['ngCordova'])
           $scope.puntos_rival = $scope.desafio.puntos_usuario;
           
         }
-        console.log(jugador);
-        console.info($scope.estado);
-
-        console.log($scope.tiros_activo);
-        console.log($scope.tiros_rival);
-        console.log($scope.puntos_activo);
-        console.log($scope.puntos_rival);
-
-
-        console.log($scope.tableroRival);
-        console.log($scope.tablero);
 
         if($scope.desafio.dificultad == 'facil'){ 
           $scope.batalla_cols = ['a', 'b', 'c'];
@@ -152,6 +162,8 @@ angular.module('starter.controller.juegos', ['ngCordova'])
           $scope.batalla_rows = [1,2,3,4,5,6,7]; 
         }
 
+        console.log($scope.es_turno_activo);
+
         chequearJuegoFinalizado();
 
         $scope.$apply();
@@ -159,7 +171,30 @@ angular.module('starter.controller.juegos', ['ngCordova'])
 
   });  
 
-    
+  $scope.esAgua = function(row, col, player){
+    if(player == 'rival'){
+      if(Object.keys($scope.puntos_activo).length !== 0 && $scope.tiros_rival){
+        return ($scope.tiros_rival.indexOf(row+col) !== -1 && $scope.puntos_activo[row+col]);
+      }
+    } else {
+      if(Object.keys($scope.puntos_rival).length !== 0 && $scope.tiros_activo){
+        return ($scope.tiros_activo.indexOf(row+col) !== -1 && $scope.puntos_rival[row+col]);
+      }
+    }
+
+    return false;
+  }  
+  $scope.esBarco = function(row, col, player){
+    if(player == 'rival'){
+      if(Object.keys($scope.puntos_activo).length !== 0 && $scope.tiros_rival){
+        return ($scope.tiros_rival.indexOf(row+col) !== -1 && !$scope.puntos_activo[row+col]);
+      }
+    } else {
+      if(Object.keys($scope.puntos_rival).length !== 0 && $scope.tiros_activo){
+        return ($scope.tiros_activo.indexOf(row+col) !== -1 && !$scope.puntos_rival[row+col]);
+      }
+    }
+  }
      
   
   $scope.selectPosition = function(row, col){
@@ -190,11 +225,15 @@ angular.module('starter.controller.juegos', ['ngCordova'])
     }
     console.log($scope.desafio);
 
-    SrvFirebase.RefBatallasPorId(id_desafio).update($scope.desafio, function(error){
+    SrvFirebase.RefDesafioPorId(id_desafio).update($scope.desafio, function(error){
       if(error){
         alert('Ocurrió un error, inténtelo nuevamente.');
       }
       else {
+        SrvFirebase.EnviarNotificacion('TE TOCA', 
+            MensajesDesafio['tuTurno']('batalla', UsuarioDesafio.getEmail()),
+            RIVAL_SENDER_ID
+        );
         $state.reload();
       }
     });
@@ -202,7 +241,7 @@ angular.module('starter.controller.juegos', ['ngCordova'])
 
   $scope.userSelected = function(col, row){
     if($scope.jugada === col+row){ return true; }
-    if($scope.desafio.turnos_usuario){
+    if($scope.desafio.tiros_activo){
       for(var turno of $scope.tiros_activo){
         if(turno === col+row){
           return true;
@@ -219,6 +258,7 @@ angular.module('starter.controller.juegos', ['ngCordova'])
     console.log('chequearFinalizado')
 
     if($scope.desafio.estado == 'jugando' && 
+      $scope.desafio.turnos_usuario && $scope.desafio.turnos_rival &&
       $scope.desafio.turnos_usuario.length == $scope.desafio.turnos_rival.length)
     {
       
@@ -246,40 +286,86 @@ angular.module('starter.controller.juegos', ['ngCordova'])
         var activoEsUsuario = UsuarioDesafio.getEmail() == $scope.desafio.usuario;
 
         var rival = activoEsUsuario ? $scope.desafio.rival : $scope.desafio.usuario;
-        mensajeActivo = '';
-        mensajeRival = '';
+        var mensajeActivo = '';
+        var mensajeRival = '';
 
         if(aciertosUsuario > aciertosRival){
           if(activoEsUsuario){
             mensajeActivo = 'victoria';
             mensajeRival = 'derrota';
+            $scope.desafio.ganador = UsuarioDesafio.getEmail();
           }
           else {
             mensajeActivo = 'derrota';
             mensajeRival = 'victoria';
+            $scope.desafio.ganador = rival;
           }
         } else if (aciertosUsuario < aciertosRival){
           if(activoEsUsuario){
             mensajeActivo = 'derrota';
             mensajeRival = 'victoria';
+            $scope.desafio.ganador = UsuarioDesafio.getEmail();
           }
           else {
             mensajeActivo = 'victoria';
             mensajeRival = 'derrota';
+            $scope.desafio.ganador = rival;
           }
         } else {
             mensajeActivo = 'empate';
             mensajeRival = 'empate';
+            $scope.desafio.ganador = '';
         }
 
-        $scope.showAlert = function() {
-          var alertPopup = $ionicPopup.alert({
-            title: mensajeActivo.toUpperCase(),
-            template: MensajesDesafio[mensajeActivo]('batalla', rival)
+        SrvFirebase.RefDesafioPorId(id_desafio).update($scope.desafio, function(error){
+          if(error){
+            console.error(error);
+            DeviceTools.showToast('Ocurrió un error, inténtelo nuevamente');
+          }
+        })
+
+        var actualizarCreditos = [];
+        SrvFirebase.RefUsuarios().once('value', function(snap){
+          snap.forEach(function(data){
+            var user = data.val();
+            var id = data.getKey();
+            console.log(user);
+            console.log(id);
+
+            if(user.email == UsuarioDesafio.getEmail()){
+              if(mensajeActivo == 'victoria'){
+                user.creditos = user.creditos + ($scope.desafio.monto * 2);
+              } else if(mensajeActivo == 'empate'){
+                user.creditos = user.creditos + $scope.desafio.monto;
+              }
+              actualizarCreditos.push({key:id, user:user});
+            } else if (user.email == rival){
+              if(mensajeRival == 'victoria'){
+                user.creditos = user.creditos + ($scope.desafio.monto * 2);
+              } else if(mensajeRival == 'empate'){
+                user.creditos = user.creditos + $scope.desafio.monto;
+              }
+              actualizarCreditos.push({key:id, user:user});
+            }
           });
-        }
 
-        SrvFirebase.EnviarNotificacion('DERROTA', 
+          console.log(actualizarCreditos);
+          for(var user of actualizarCreditos){
+            SrvFirebase.RefUsuarioPorId(user.key).update(user.user, function(error){
+              if(error){
+                console.error(error);
+              }
+            })
+          }
+        })
+
+
+        var alertPopup = $ionicPopup.alert({
+          title: mensajeActivo.toUpperCase(),
+          template: MensajesDesafio[mensajeActivo]('batalla', rival)
+        });
+
+        SrvFirebase.EnviarNotificacion(mensajeRival.toUpperCase(), 
             MensajesDesafio[mensajeRival]('batalla', UsuarioDesafio.getEmail()),
             RIVAL_SENDER_ID
         );
@@ -294,8 +380,8 @@ angular.module('starter.controller.juegos', ['ngCordova'])
 .controller('JuegoApuestaCtrl', function($scope, $state, $stateParams, SrvFirebase, UsuarioDesafio, $timeout){
   $timeout(function(){
     $scope.$apply(function(){
-      var refApuestas = SrvFirebase.RefApuestasPorId(id_desafio);
-      refApuestas.on("child_added", function(snapshot){
+      var RefDesafios = SrvFirebase.RefDesafioPorId(id_desafio);
+      RefDesafios.on("child_added", function(snapshot){
         var desafio = snapshot.val();
         console.log(snapshot.getKey());
         desafio.id_desafio = snapshot.getKey();

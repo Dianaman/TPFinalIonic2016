@@ -1,6 +1,6 @@
 {
   "name": "tpfinalionic2016",
-  "app_id": "",
+  "app_id": "94d86f3e",
   "type": "ionic1",
   "watchPatterns": [
     "scss/**/*"

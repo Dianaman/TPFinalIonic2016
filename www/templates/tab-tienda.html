@@ -1,13 +1,13 @@
 
 <ion-view view-title="Tienda">
   <ion-content class="padding">
-  		<select name="creditos.codigo" ng-model="creditos.codigo">
-	  		<option selected disabled hidden>Código</option>
-	  		<option value="RtS60H">RtS60H</option>
-	  		<option value="m4FfTTe">m4FfTTe</option>
-	  		<option value="35gsy7u">35gsy7u</option>
-	  	</select>
-	<button ng-click="cargarCredito()" class="button button-block button-balanced">Cargar Crédito</button><br><br>
+	<select name="creditos.codigo" ng-model="creditos.codigo">
+  		<option selected disabled hidden>Código</option>
+  		<option value="RtS60H">RtS60H</option>
+  		<option value="m4FfTTe">m4FfTTe</option>
+  		<option value="35gsy7u">35gsy7u</option>
+  	</select>
+	<button ng-click="cargarCredito()" class="button button-block button-balanced" ng-disabled="!creditos.codigo">Cargar Crédito</button><br><br>
 	<button ng-click="escanear()" class="button button-block button-balanced">Escanear QR</button>
   </ion-content>
 </ion-view>

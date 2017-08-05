@@ -16,7 +16,7 @@ angular.module('starter.controllers', ['ngCordova'])
   }
 
   $scope.CrearDesafio = function(){
-    $state.go('desafios.nuevo');
+    $state.go('tab.opciones');
   }
 
   $scope.IrATienda = function(){
@@ -30,8 +30,6 @@ angular.module('starter.controllers', ['ngCordova'])
   $scope.About = function(){
     $state.go('tab.about');
   }
-
-
 })
 
 .controller('AboutCtrl', function($scope, $window) {
@@ -183,41 +181,42 @@ console.log(snapshot);
   } 
 })
 
-.controller('TiendaCtrl', function($scope, $rootScope, $ionicPlatform, $cordovaBarcodeScanner, UsuarioDesafio){
-
-  /*$scope.escanear = function(){
-    $ionicPlatform.ready(function() {
-      $cordovaBarcodeScanner
-        .scan()
-        .then(function(barcodeData) {
-          // Success! Barcode data is here
-        }, function(error) {
-          // An error occurred
-        });
-
-
-      // NOTE: encoding not functioning yet
-      $cordovaBarcodeScanner
-        .encode(BarcodeScanner.Encode.TEXT_TYPE, "http://www.nytimes.com")
-        .then(function(success) {
-          // Success!
-        }, function(error) {
-          // An error occurred
-        });
-    });
-  }*/
+.controller('TiendaCtrl', function($scope,$state, $rootScope, $ionicPlatform, $cordovaBarcodeScanner, UsuarioDesafio, DeviceTools){
 
   $scope.creditos = {};
-
+  $scope.usuario = {
+    creditos: UsuarioDesafio.getCred()
+  }
 
   try{
-
-
     $scope.cargarCredito = function(){
       var codigo = $scope.creditos.codigo;
       console.log(codigo);
 
-      firebase.database().ref('codigos/').orderByChild("codigo").equalTo(codigo).limitToFirst(1).on("child_added", function(snapshot){
+      subirCodigo(codigo);
+    };
+
+    $scope.escanear = function(){
+      $ionicPlatform.ready(function(){
+        $cordovaBarcodeScanner.scan().then(
+        function(imageData) {
+          console.log("Barcode Format -> " + imageData.format);
+          console.log("Cancelled -> " + imageData.cancelled);
+
+          subirCodigo(imageData.text);
+        }, function(error) {
+          console.log("An error happened -> " + error);
+        });
+      })
+    }
+  }catch(e){
+    console.error(e);
+  }
+
+
+
+  var subirCodigo = function(codigo){
+    firebase.database().ref('codigos/').orderByChild("codigo").equalTo(codigo).limitToFirst(1).on("child_added", function(snapshot){
         var codigoExistente = snapshot.val();
 
         if(codigoExistente)
@@ -232,7 +231,7 @@ console.log(snapshot);
 
             firebase.database().ref('codigos/'+snapshot.key).update(codigoExistente, function(error){
               if(error){
-                alert('Ocurrió un error, inténtelo nuevamente.');
+                DeviceTools.showToast('Ocurrió un error, inténtelo nuevamente.');
               }
               else {
                 var creditoActual = UsuarioDesafio.getCred() + codigoExistente.monto;
@@ -241,40 +240,27 @@ console.log(snapshot);
                 firebase.database().ref('usuarios/'+UsuarioDesafio.getKey()).update(creditojson, function(error){
                   if(error)
                   {
-                    alert('Ocurrió un error, inténtelo nuevamente.')
+                    DeviceTools.showToast('Ocurrió un error, inténtelo nuevamente.');
                   }
                   else {
-                    alert('Tu crédito ha sido cargado.');
+                    DeviceTools.showToast('Tu crédito ha sido cargado');
                     $rootScope.usuarioActual.creditos = creditoActual;
+                    $scope.usuario.creditos = creditoActual;
+
+                    $state.reload();
                   }
                 });
               }
             }); //firebase update codigo
           }
           else {
-            alert('El código ya ha sido utilizado. Contáctate con algún administrador.');
+            DeviceTools.showToast('El código ya ha sido utilizado. Contáctate con algún administrador.');
           }
         }
         else {
-          alert('El código es inexistente');
+          DeviceTools.showToast('El código es inexistente');
         }
       });
-    };
-
-
-    $scope.escanear = function(){
-      $ionicPlatform.ready(function(){
-        $cordovaBarcodeScanner.scan().then(function(imageData) {
-              alert(imageData.text);
-              console.log("Barcode Format -> " + imageData.format);
-              console.log("Cancelled -> " + imageData.cancelled);
-          }, function(error) {
-              console.log("An error happened -> " + error);
-          });
-      })
-    }
-  }catch(e){
-    console.error(e);
   }
 })
 
